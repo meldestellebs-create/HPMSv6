@@ -1,444 +1,2516 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BQW Portal - Erweitert</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bildungswege Baden-Württemberg - Interaktives Tool</title>
+<style>
+* { 
+  margin: 0; 
+  padding: 0; 
+  box-sizing: border-box; 
+}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+:root {
+  --primary-blue: #0B7BB3;
+  --primary-purple: #6B2E7F;
+  --accent-magenta: #A61E4D;
+  --accent-yellow: #FFD93D;
+  --accent-mint: #B8D5C8;
+  --bg-light: #F5F7FA;
+  --bg-white: #FFFFFF;
+  --text-dark: #2C3E50;
+  --text-gray: #7F8C8D;
+  --border-color: #E1E8ED;
+}
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
+body { 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg-light);
+  color: var(--text-dark); 
+  line-height: 1.6;
+}
 
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
+/* Header */
+.header {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+  color: white;
+  padding: 30px 40px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
 
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
+.header h1 {
+  font-size: 2.2rem;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
 
-        .tabs {
-            display: flex;
-            background: #f8f9fa;
-            border-bottom: 2px solid #e0e0e0;
-            overflow-x: auto;
-            flex-wrap: wrap;
-        }
+.header p {
+  font-size: 1.05rem;
+  opacity: 0.95;
+}
 
-        .tab-button {
-            flex: 1;
-            min-width: 150px;
-            padding: 20px;
-            background: #f8f9fa;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            color: #555;
-            transition: all 0.3s;
-            border-bottom: 3px solid transparent;
-        }
+/* Tab Navigation */
+.tab-navigation {
+  display: flex;
+  background: var(--bg-white);
+  border-bottom: 2px solid var(--border-color);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
 
-        .tab-button:hover {
-            background: #e9ecef;
-        }
+.tab-button {
+  flex: 1;
+  padding: 18px 20px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-gray);
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+  position: relative;
+}
 
-        .tab-button.active {
-            background: white;
-            color: #667eea;
-            border-bottom-color: #667eea;
-        }
+.tab-button:hover {
+  background: var(--bg-light);
+  color: var(--primary-blue);
+}
 
-        .tab-content {
-            display: none;
-            padding: 40px;
-            animation: fadeIn 0.4s;
-        }
+.tab-button.active {
+  color: var(--primary-blue);
+  background: var(--bg-white);
+  border-bottom: 3px solid var(--primary-blue);
+}
 
-        .tab-content.active {
-            display: block;
-        }
+.tab-content {
+  display: none;
+}
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+.tab-content.active {
+  display: block;
+}
 
-        /* Filter & Suchbereich */
-        .search-filter-section {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
+/* Main Split Layout */
+.split-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: calc(100vh - 200px);
+  background: var(--bg-white);
+  margin: 0;
+}
 
-        .search-box {
-            width: 100%;
-            padding: 15px;
-            font-size: 16px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
+.split-section {
+  padding: 50px 60px;
+  overflow-y: auto;
+}
 
-        .filter-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
+.split-section.left {
+  background: var(--bg-white);
+  border-right: 2px solid var(--border-color);
+}
 
-        .filter-tag {
-            padding: 10px 20px;
-            background: white;
-            border: 2px solid #667eea;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 14px;
-        }
+.split-section.right {
+  background: var(--bg-light);
+}
 
-        .filter-tag:hover, .filter-tag.active {
-            background: #667eea;
-            color: white;
-        }
+.section-number {
+  display: inline-block;
+  background: var(--primary-blue);
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 36px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-right: 12px;
+}
 
-        /* Accordion Styles */
-        .accordion-item {
-            margin-bottom: 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            overflow: hidden;
-        }
+.section-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+}
 
-        .accordion-header {
-            padding: 20px;
-            background: #f8f9fa;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background 0.3s;
-        }
+.section-subtitle {
+  font-size: 1.05rem;
+  color: var(--text-gray);
+  margin-bottom: 35px;
+  line-height: 1.5;
+}
 
-        .accordion-header:hover {
-            background: #e9ecef;
-        }
+/* Custom Select Styling */
+.select-wrapper {
+  position: relative;
+  margin-bottom: 35px;
+}
 
-        .accordion-header::after {
-            content: '▼';
-            transition: transform 0.3s;
-        }
+.select-label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
 
-        .accordion-header.active::after {
-            transform: rotate(180deg);
-        }
+.select-wrapper select {
+  width: 100%;
+  padding: 16px 20px;
+  padding-right: 45px;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 1.05rem;
+  background: var(--bg-white);
+  cursor: pointer;
+  appearance: none;
+  color: var(--text-dark);
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
 
-        .accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-            background: white;
-        }
+.select-wrapper::after {
+  content: '▼';
+  position: absolute;
+  right: 20px;
+  bottom: 18px;
+  color: var(--primary-blue);
+  pointer-events: none;
+  font-size: 0.85rem;
+}
 
-        .accordion-content.active {
-            max-height: 3000px;
-            padding: 20px;
-        }
+.select-wrapper select:hover {
+  border-color: var(--primary-blue);
+  box-shadow: 0 2px 8px rgba(11, 123, 179, 0.15);
+}
 
-        /* Karten Layout */
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin: 20px 0;
-        }
+.select-wrapper select:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(11, 123, 179, 0.1);
+}
 
-        .card {
-            padding: 25px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border-left: 4px solid #667eea;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
+/* Buttons */
+.button-group {
+  display: flex;
+  gap: 15px;
+  margin-top: 40px;
+}
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
+.btn {
+  flex: 1;
+  padding: 16px 32px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
 
-        .card h3 {
-            color: #667eea;
-            margin-bottom: 15px;
-        }
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(11, 123, 179, 0.3);
+}
 
-        /* Tabellen */
-        .info-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(11, 123, 179, 0.4);
+}
 
-        .info-table th,
-        .info-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-        }
+.btn-secondary {
+  background: var(--bg-light);
+  color: var(--text-dark);
+  border: 2px solid var(--border-color);
+}
 
-        .info-table th {
-            background: #667eea;
-            color: white;
-            font-weight: 600;
-        }
+.btn-secondary:hover {
+  background: var(--border-color);
+}
 
-        .info-table tr:hover {
-            background: #f8f9fa;
-        }
+/* Results Display */
+.results-container {
+  background: var(--bg-white);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  margin-top: 30px;
+}
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header h1 { font-size: 1.8em; }
-            .tab-button { min-width: 120px; font-size: 14px; padding: 15px 10px; }
-            .tab-content { padding: 20px; }
-            .card-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+.results-header {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+  color: white;
+  padding: 25px 30px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.results-content {
+  padding: 30px;
+}
+
+.path-card {
+  background: var(--bg-white);
+  border: 2px solid var(--border-color);
+  border-left: 5px solid var(--primary-blue);
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.path-card.recommended-path {
+  border-color: #4caf50;
+  border-left-color: #4caf50;
+  border-width: 2px;
+  border-left-width: 5px;
+  background: linear-gradient(to right, #e8f5e9 0%, var(--bg-white) 15%);
+}
+
+.path-card:hover {
+  transform: translateX(5px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  border-left-color: var(--primary-purple);
+}
+
+.path-card.recommended-path:hover {
+  border-left-color: #388e3c;
+}
+
+.path-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.path-number-badge {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.path-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  flex: 1;
+  margin: 0 15px;
+}
+
+.duration-badge {
+  background: var(--accent-yellow);
+  color: var(--text-dark);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.recommended-badge {
+  background: #4caf50;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-left: 8px;
+  white-space: nowrap;
+}
+
+.path-steps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.step {
+  background: linear-gradient(135deg, #E8F4F8 0%, #D6E9F5 100%);
+  color: var(--primary-blue);
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: 1px solid rgba(11, 123, 179, 0.2);
+}
+
+.arrow {
+  color: var(--primary-purple);
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+
+.path-note {
+  background: #FFF9E6;
+  border-left: 3px solid var(--accent-yellow);
+  padding: 12px 16px;
+  margin-top: 15px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #8B6E00;
+  line-height: 1.5;
+}
+
+.path-note strong {
+  color: #6B5400;
+}
+
+.info-box {
+  background: linear-gradient(135deg, #E8F4F8 0%, #D6E9F5 100%);
+  border-left: 4px solid var(--primary-blue);
+  padding: 20px;
+  margin-top: 25px;
+  border-radius: 10px;
+  line-height: 1.7;
+}
+
+.info-box p {
+  color: var(--text-dark);
+  margin-bottom: 10px;
+}
+
+.info-box p:last-child {
+  margin-bottom: 0;
+}
+
+.info-box strong {
+  color: var(--primary-blue);
+  font-weight: 700;
+}
+
+/* Visualization Elements */
+.visualization-area {
+  background: var(--bg-white);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  margin-bottom: 25px;
+}
+
+.vis-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.connection-visual {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30px 20px;
+  position: relative;
+}
+
+.endpoint {
+  flex: 0 0 180px;
+  text-align: center;
+}
+
+.endpoint-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 15px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-align: center;
+  padding: 15px;
+  line-height: 1.3;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border: 4px solid var(--bg-white);
+}
+
+.endpoint-circle.start {
+  background: linear-gradient(135deg, var(--accent-mint) 0%, #9BC4B5 100%);
+  color: #2C5F4F;
+}
+
+.endpoint-circle.target {
+  background: linear-gradient(135deg, var(--accent-yellow) 0%, #FFCD1F 100%);
+  color: #8B6E00;
+}
+
+.endpoint-label {
+  font-size: 0.85rem;
+  color: var(--text-gray);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.endpoint-value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-top: 5px;
+}
+
+.connection-line {
+  flex: 1;
+  position: relative;
+  height: 4px;
+  background: linear-gradient(90deg, #9BC4B5 0%, var(--primary-blue) 50%, #FFCD1F 100%);
+  margin: 0 20px;
+  border-radius: 2px;
+}
+
+.connection-arrow {
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid #FFCD1F;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+}
+
+/* Begriffe Tab Styles */
+.glossary-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 40px;
+}
+
+.glossary-item {
+  background: var(--bg-white);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  padding: 25px 30px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.glossary-item:hover {
+  border-color: var(--primary-blue);
+  box-shadow: 0 4px 16px rgba(11, 123, 179, 0.1);
+}
+
+.glossary-term {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  margin-bottom: 12px;
+}
+
+.glossary-description {
+  color: var(--text-dark);
+  line-height: 1.7;
+  font-size: 1.05rem;
+}
+
+/* Quiz Styles */
+.quiz-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 40px;
+}
+
+.quiz-start {
+  text-align: center;
+  padding: 60px 40px;
+  background: var(--bg-white);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.quiz-start h2 {
+  color: var(--primary-blue);
+  font-size: 2.2rem;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.quiz-start p {
+  font-size: 1.15rem;
+  color: var(--text-gray);
+  margin-bottom: 35px;
+  line-height: 1.8;
+}
+
+.quiz-progress-container {
+  background: var(--border-color);
+  height: 8px;
+  border-radius: 10px;
+  margin-bottom: 35px;
+  overflow: hidden;
+}
+
+.quiz-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple));
+  width: 0%;
+  transition: width 0.4s ease;
+  border-radius: 10px;
+}
+
+.quiz-question {
+  background: var(--bg-white);
+  padding: 40px;
+  border-radius: 16px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.quiz-question h3 {
+  color: var(--primary-blue);
+  margin-bottom: 25px;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.quiz-options {
+  display: grid;
+  gap: 15px;
+}
+
+.quiz-option {
+  padding: 18px 24px;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: var(--bg-white);
+  font-size: 1.05rem;
+}
+
+.quiz-option:hover {
+  border-color: var(--primary-blue);
+  background: var(--bg-light);
+  transform: translateX(5px);
+}
+
+.quiz-option.selected {
+  border-color: var(--primary-blue);
+  background: linear-gradient(135deg, #E8F4F8 0%, #D6E9F5 100%);
+  font-weight: 600;
+}
+
+.beruf-card {
+  background: var(--bg-white);
+  border: 2px solid var(--border-color);
+  border-left: 5px solid var(--primary-purple);
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.beruf-card:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+.beruf-card h4 {
+  color: var(--primary-blue);
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.beruf-card p {
+  color: var(--text-dark);
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.beruf-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.beruf-tag {
+  background: var(--bg-light);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+/* Responsive adjustments */
+@media (max-width: 968px) {
+  .split-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .split-section.left {
+    border-right: none;
+    border-bottom: 2px solid var(--border-color);
+  }
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🎓 BQW Portal</h1>
-            <p>Berufsorientierung & Ausbildungsguide</p>
-        </div>
 
-        <div class="tabs">
-            <button class="tab-button active" onclick="switchTab(0)">📊 SPOT Dashboard</button>
-            <button class="tab-button" onclick="switchTab(1)">📈 Statistiken</button>
-            <button class="tab-button" onclick="switchTab(2)">ℹ️ Info</button>
-            <button class="tab-button" onclick="switchTab(3)">📚 Ausbildungsguide</button>
-            <button class="tab-button" onclick="switchTab(4)">🎯 Schule und dann?</button>
-        </div>
+<div class="header">
+  <h1>🎓 Bildungswege Baden-Württemberg</h1>
+  <p>Finde deinen Weg zum Wunschabschluss – individuell und übersichtlich</p>
+</div>
 
-        <!-- Tab 0: SPOT Dashboard (Platzhalter) -->
-        <div class="tab-content active">
-            <h2>SPOT Dashboard</h2>
-            <p><em>Hier kommt dein bestehendes SPOT Dashboard hin...</em></p>
-        </div>
+<div class="tab-navigation">
+  <button class="tab-button active" onclick="switchTab('tool')">📚 Bildungswegetool</button>
+  <button class="tab-button" onclick="switchTab('begriffe')">💡 Begriffe erklärt</button>
+  <button class="tab-button" onclick="switchTab('quiz')">🎯 Berufswahl-Quiz</button>
+  <button class="tab-button" onclick="switchTab('ausbildung')">📖 Ausbildungsguide</button>
+  <button class="tab-button" onclick="switchTab('schule')">🎓 Schule und dann?</button>
+</div>
 
-        <!-- Tab 1: Statistiken (Platzhalter) -->
-        <div class="tab-content">
-            <h2>Statistiken</h2>
-            <p><em>Hier kommen deine Statistiken hin...</em></p>
-        </div>
-
-        <!-- Tab 2: Info (Platzhalter) -->
-        <div class="tab-content">
-            <h2>Informationen</h2>
-            <p><em>Hier kommen deine Infos hin...</em></p>
-        </div>
-
-        <!-- Tab 3: Ausbildungsguide -->
-        <div class="tab-content">
-            <h2>📚 Ausbildungsguide für Schülerinnen und Schüler</h2>
-
-            <div class="search-filter-section">
-                <input type="text" class="search-box" placeholder="🔍 Suche nach Berufen, Schulen oder Themen..." 
-                       onkeyup="filterContent(this.value)">
-
-                <div class="filter-tags">
-                    <span class="filter-tag" onclick="toggleFilter(this, 'technik')">🔧 Technik</span>
-                    <span class="filter-tag" onclick="toggleFilter(this, 'buero')">💼 Büro & Verwaltung</span>
-                    <span class="filter-tag" onclick="toggleFilter(this, 'it')">💻 IT & Medien</span>
-                    <span class="filter-tag" onclick="toggleFilter(this, 'gesundheit')">🏥 Gesundheit & Soziales</span>
-                    <span class="filter-tag" onclick="toggleFilter(this, 'handwerk')">🛠️ Handwerk</span>
-                    <span class="filter-tag" onclick="toggleFilter(this, 'verkauf')">🛒 Verkauf & Handel</span>
-                    <span class="filter-tag" onclick="toggleFilter(this, 'gastronomie')">🍽️ Gastronomie</span>
-                    <span class="filter-tag" onclick="toggleFilter(this, 'andere')">✨ Andere</span>
-                </div>
+<!-- ==================== TAB 1: Bildungswege Tool ==================== -->
+<div id="tool-tab" class="tab-content active">
+  <div class="split-container">
+    <!-- Left Section: Start -->
+    <div class="split-section left">
+      <div class="section-title">
+        <span class="section-number">1</span>
+        Start
+      </div>
+      <p class="section-subtitle">Von welcher Schulform bzw. Abschluss aus startest Du?</p>
+      
+      <div class="select-wrapper">
+        <label class="select-label">Aktuelle Schulform / Abschluss</label>
+        <select id="start">
+          <option value="">-- Bitte wählen --</option>
+          <option value="ohneAbschluss">Ohne Abschluss (allgemeinbildende Schule)</option>
+          <option value="sbbz">Sonderpädagogische Bildungs- und Beratungszentren (SBBZ)</option>
+          <option value="vabo">VABO Vorqualifizierungsjahr</option>
+          <option value="avdual">AVdual</option>
+          <option value="hauptschulabschluss">Hauptschulabschluss</option>
+          <option value="mittlereReife">Mittlere Reife/Mittlerer Bildungsabschluss</option>
+          <option value="fachhochschulreife">Fachhochschulreife</option>
+          <option value="abitur">Abitur/Allgemeine Hochschulreife</option>
+          <option value="meister">Meister/Techniker/Fachwirt</option>
+        </select>
+      </div>
+      
+      <div class="visualization-area">
+        <div class="vis-title">Deine Auswahl</div>
+        <div class="connection-visual">
+          <div class="endpoint">
+            <div class="endpoint-circle start" id="visual-start">
+              ?
             </div>
-
-            <div class="accordion">
-                <div class="accordion-item">
-                    <div class="accordion-header" onclick="toggleAccordion(this)">
-                        1. Berufsfelder kennenlernen
-                    </div>
-                    <div class="accordion-content">
-                        <p>Übersicht über verschiedene Berufsfelder mit typischen Tätigkeiten und Anforderungen.</p>
-                        <p><strong>Hier würde der vollständige Inhalt aus dem PDF stehen...</strong></p>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header" onclick="toggleAccordion(this)">
-                        2. Ausbildungsarten im Überblick
-                    </div>
-                    <div class="accordion-content">
-                        <p>Duale Ausbildung, Schulische Ausbildung, Studium und weitere Wege.</p>
-                        <p><strong>Hier würde der vollständige Inhalt aus dem PDF stehen...</strong></p>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header" onclick="toggleAccordion(this)">
-                        3. Berufliche Schulen im Landkreis
-                    </div>
-                    <div class="accordion-content">
-                        <table class="info-table">
-                            <tr>
-                                <th>Schule</th>
-                                <th>Schwerpunkte</th>
-                                <th>Kontakt</th>
-                            </tr>
-                            <tr>
-                                <td>Beispiel Berufsschule 1</td>
-                                <td>Technik, IT</td>
-                                <td>www.beispiel.de</td>
-                            </tr>
-                        </table>
-                        <p><strong>Hier würden alle Schulen aus dem PDF stehen...</strong></p>
-                    </div>
-                </div>
+            <div class="endpoint-label">Start</div>
+            <div class="endpoint-value" id="visual-start-text">Nicht gewählt</div>
+          </div>
+          
+          <div class="connection-line">
+            <div class="connection-arrow"></div>
+          </div>
+          
+          <div class="endpoint">
+            <div class="endpoint-circle target" id="visual-target">
+              ?
             </div>
+            <div class="endpoint-label">Ziel</div>
+            <div class="endpoint-value" id="visual-target-text">Nicht gewählt</div>
+          </div>
         </div>
+      </div>
+    </div>
+    
+    <!-- Right Section: Ziel -->
+    <div class="split-section right">
+      <div class="section-title">
+        <span class="section-number">2</span>
+        Ziel
+      </div>
+      <p class="section-subtitle">Zu welchem schulischen oder beruflichen Abschluss möchtest Du kommen?</p>
+      
+      <div class="select-wrapper">
+        <label class="select-label">Gewünschter Abschluss</label>
+        <select id="ziel">
+          <option value="">-- Bitte wählen --</option>
+          <option value="bve">Berufsvorbereitende Einrichtung (BVE)</option>
+          <option value="vabKF">Förderschule VAB-KF/VAB Abschluss</option>
+          <option value="sonderberufsschule">Sonderberufsschule</option>
+          <option value="hauptschulabschluss">Hauptschulabschluss</option>
+          <option value="berufsabschluss">Berufsabschluss</option>
+          <option value="mittlereReife">Mittlere Reife/Mittlerer Bildungsabschluss</option>
+          <option value="fachhochschulreife">Fachhochschulreife</option>
+          <option value="abitur">Abitur/Allgemeine Hochschulreife</option>
+          <option value="meister">Meister/Techniker/Fachwirt</option>
+          <option value="bachelor">Bachelor/Master/Promotion</option>
+        </select>
+      </div>
+      
+      <div class="button-group">
+        <button class="btn btn-primary" onclick="showPaths()">🔍 Wege anzeigen</button>
+        <button class="btn btn-secondary" onclick="reset()">🔄 Zurücksetzen</button>
+      </div>
+      
+      <div id="result"></div>
+    </div>
+  </div>
+</div>
 
-        <!-- Tab 4: Schule und dann? -->
-        <div class="tab-content">
-            <h2>🎯 Schule und dann?</h2>
-            <p>Finde deinen individuellen Weg nach der Schule - egal welchen Abschluss du hast!</p>
+<!-- ==================== TAB 2: Begriffe erklärt ==================== -->
+<div id="begriffe-tab" class="tab-content">
+  <div class="glossary-container">
+    <div class="header" style="margin-bottom: 40px;">
+      <h1 style="font-size: 2rem;">💡 Begriffe erklärt</h1>
+      <p>Verstehe die verschiedenen Schulformen und Abschlüsse in Baden-Württemberg</p>
+    </div>
+    
+    <div class="glossary-item">
+      <div class="glossary-term">Hauptschulabschluss</div>
+      <div class="glossary-description">
+        Der Hauptschulabschluss ist der erste allgemeinbildende Schulabschluss in Deutschland. Er wird nach erfolgreichem Abschluss der 9. Klasse erworben und ermöglicht den Zugang zu einer Berufsausbildung oder weiteren schulischen Bildungswegen.
+      </div>
+    </div>
+    
+    <div class="glossary-item">
+      <div class="glossary-term">Mittlere Reife / Mittlerer Bildungsabschluss</div>
+      <div class="glossary-description">
+        Die Mittlere Reife (auch Realschulabschluss genannt) wird nach der 10. Klasse erworben. Dieser Abschluss qualifiziert für anspruchsvollere Berufsausbildungen und ermöglicht den Zugang zu weiterführenden Schulen wie Berufskolleg oder beruflichem Gymnasium.
+      </div>
+    </div>
+    
+    <div class="glossary-item">
+      <div class="glossary-term">Fachhochschulreife</div>
+      <div class="glossary-description">
+        Die Fachhochschulreife berechtigt zum Studium an Fachhochschulen und manchen Universitäten. Sie kann an Berufskollegs, Fachoberschulen oder beruflichen Gymnasien erworben werden und kombiniert oft theoretisches Wissen mit praktischen Erfahrungen.
+      </div>
+    </div>
+    
+    <div class="glossary-item">
+      <div class="glossary-term">Abitur / Allgemeine Hochschulreife</div>
+      <div class="glossary-description">
+        Das Abitur ist der höchste Schulabschluss in Deutschland und berechtigt zum Studium an allen Universitäten und Hochschulen. Es kann an allgemeinbildenden oder beruflichen Gymnasien erworben werden.
+      </div>
+    </div>
+    
+    <div class="glossary-item">
+      <div class="glossary-term">AVdual (Ausbildungsvorbereitung dual)</div>
+      <div class="glossary-description">
+        AVdual ist ein Bildungsgang für Jugendliche ohne Ausbildungsplatz. Er kombiniert schulisches Lernen mit praktischen Erfahrungen in Betrieben und bereitet gezielt auf eine Berufsausbildung vor. Gleichzeitig kann der Hauptschulabschluss erworben oder verbessert werden.
+      </div>
+    </div>
+    
+    <div class="glossary-item">
+      <div class="glossary-term">VABO (Vorqualifizierungsjahr Arbeit/Beruf mit Schwerpunkt Erwerb von Deutschkenntnissen)</div>
+      <div class="glossary-description">
+        Das VABO richtet sich an Jugendliche ohne ausreichende Deutschkenntnisse. Es vermittelt Sprachkenntnisse und berufliche Orientierung, um den Zugang zum deutschen Bildungssystem und Arbeitsmarkt zu erleichtern.
+      </div>
+    </div>
+    
+    <div class="glossary-item">
+      <div class="glossary-term">Berufskolleg</div>
+      <div class="glossary-description">
+        Das Berufskolleg ist eine berufliche Vollzeitschule, die zur Fachhochschulreife führt und gleichzeitig berufliche Kenntnisse vermittelt. Es gibt verschiedene Fachrichtungen wie Wirtschaft, Technik oder Gesundheit.
+      </div>
+    </div>
+    
+    <div class="glossary-item">
+      <div class="glossary-term">Berufliches Gymnasium</div>
+      <div class="glossary-description">
+        Das berufliche Gymnasium führt zur allgemeinen Hochschulreife (Abitur) und verbindet allgemeinbildende Fächer mit berufsbezogenen Schwerpunkten wie Wirtschaft, Technik oder Gesundheit.
+      </div>
+    </div>
+    
+    <div class="glossary-item">
+      <div class="glossary-term">Duale Ausbildung</div>
+      <div class="glossary-description">
+        Die duale Ausbildung kombiniert praktische Arbeit im Betrieb mit theoretischem Unterricht in der Berufsschule. Sie dauert in der Regel 2-3,5 Jahre und führt zu einem anerkannten Berufsabschluss.
+      </div>
+    </div>
+    
+    <div class="glossary-item">
+      <div class="glossary-term">Meister/Techniker/Fachwirt</div>
+      <div class="glossary-description">
+        Diese Fortbildungsabschlüsse bauen auf einer abgeschlossenen Berufsausbildung auf und qualifizieren für Führungspositionen oder Selbstständigkeit. Sie sind dem Bachelor-Niveau gleichgestellt und ermöglichen auch ein Hochschulstudium.
+      </div>
+    </div>
+    
+    <div class="glossary-item">
+      <div class="glossary-term">1-jährige Berufsfachschule (1BFS)</div>
+      <div class="glossary-description">
+        Die einjährige Berufsfachschule vermittelt berufliche Grundbildung in bestimmten Berufsfeldern wie Metalltechnik, Bautechnik oder Hauswirtschaft. Sie kann bei einer Ausbildungsplatzzusage als erstes Ausbildungsjahr angerechnet werden. Ohne Hauptschulabschluss wird mit erfolgreichem Abschluss ein gleichwertiger Bildungsstand erworben.
+      </div>
+    </div>
+    
+    <div class="glossary-item">
+      <div class="glossary-term">2-jährige Berufsfachschule (2BFS)</div>
+      <div class="glossary-description">
+        Die 2BFS baut auf dem Hauptschulabschluss auf und führt zur Fachschulreife (mittlerer Bildungsabschluss). Sie vermittelt berufliche Grundbildung in drei Bereichen: kaufmännisch, gewerblich-technisch oder Ernährung und Gesundheit.
+      </div>
+    </div>
+    
+    <div class="glossary-item">
+      <div class="glossary-term">Berufsaufbauschule (BAS)</div>
+      <div class="glossary-description">
+        Die Berufsaufbauschule ist die Mittelstufe der Berufsoberschule. Mit Hauptschulabschluss und abgeschlossener Berufsausbildung kann hier in einem Jahr der mittlere Bildungsabschluss (Fachschulreife) erworben werden.
+      </div>
+    </div>
+    
+    <div class="glossary-item">
+      <div class="glossary-term">Berufsoberschule (BOS)</div>
+      <div class="glossary-description">
+        Die Berufsoberschule richtet sich an Personen mit abgeschlossener Berufsausbildung. Die zweijährige Oberstufe führt zur fachgebundenen Hochschulreife oder – bei Erwerb einer zweiten Fremdsprache – zur allgemeinen Hochschulreife.
+      </div>
+    </div>
+    
+    <div class="glossary-item">
+      <div class="glossary-term">Modell 9+3</div>
+      <div class="glossary-description">
+        Ein besonderer Weg zum mittleren Bildungsabschluss: 9 Jahre Haupt-/Werkrealschule + 3 Jahre Berufsausbildung. Bei einem Notendurchschnitt von mindestens 2,5 (aus Hauptschulabschlussprüfung, Berufsschulabschluss und Prüfung im Ausbildungsberuf) wird ein dem Realschulabschluss gleichwertiger Bildungsstand zuerkannt.
+      </div>
+    </div>
+    
+    <div class="glossary-item">
+      <div class="glossary-term">Fachschule</div>
+      <div class="glossary-description">
+        Fachschulen sind Weiterbildungseinrichtungen für Personen mit abgeschlossener Berufsausbildung. In ein- oder zweijährigen Bildungsgängen qualifizieren sie für Tätigkeiten im mittleren Management oder für die berufliche Selbstständigkeit. An zweijährigen Fachschulen kann auch die Fachhochschulreife erworben werden.
+      </div>
+    </div>
+  </div>
+</div>
 
-            <h3 style="margin-top: 30px;">📍 Wähle deinen Startpunkt:</h3>
+<!-- ==================== TAB 3: Berufswahl-Quiz ==================== -->
+<div id="quiz-tab" class="tab-content">
+  <div class="quiz-container">
+    <div class="quiz-start" id="quiz-start">
+      <h2>🎯 Finde deinen Beruf</h2>
+      <p>Beantworte ein paar Fragen zu deinen Interessen und wir zeigen dir passende Berufe.</p>
+      <button class="btn btn-primary" onclick="startQuiz()">Quiz starten</button>
+    </div>
+    
+    <div id="quiz-progress-section" style="display: none;">
+      <div class="quiz-progress-container">
+        <div class="quiz-progress-bar" id="quiz-progress"></div>
+      </div>
+    </div>
+    
+    <div id="quiz-content"></div>
+  </div>
+</div>
 
-            <div class="card-grid">
-                <div class="card">
-                    <h3>🎒 Kein Abschluss / ohne Hauptschulabschluss</h3>
-                    <p><strong>Deine Möglichkeiten:</strong></p>
-                    <ul>
-                        <li>Berufsvorbereitende Bildungsmaßnahme (BvB)</li>
-                        <li>Einstiegsqualifizierung (EQ)</li>
-                        <li>Berufseinstiegsjahr (BEJ)</li>
-                        <li>Hauptschulabschluss nachholen</li>
-                    </ul>
-                    <p><em>Hier würden alle Details aus dem PDF stehen...</em></p>
-                </div>
+<script>
+// ==================== TAB SWITCHING ====================
+function switchTab(tabName) {
+  // Hide all tabs
+  document.querySelectorAll('.tab-content').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  
+  // Remove active from all buttons
+  document.querySelectorAll('.tab-button').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  
+  // Show selected tab
+  document.getElementById(tabName + '-tab').classList.add('active');
+  
+  // Mark button as active
+  event.target.classList.add('active');
+}
 
-                <div class="card">
-                    <h3>📘 Mit Hauptschulabschluss</h3>
-                    <p><strong>Deine Möglichkeiten:</strong></p>
-                    <ul>
-                        <li>Duale Ausbildung</li>
-                        <li>Berufsfachschule</li>
-                        <li>Mittlere Reife anstreben</li>
-                        <li>Berufskolleg</li>
-                    </ul>
-                    <p><em>Hier würden alle Details aus dem PDF stehen...</em></p>
-                </div>
+// ==================== VISUAL UPDATE ====================
+function updateVisuals() {
+  const startSelect = document.getElementById('start');
+  const zielSelect = document.getElementById('ziel');
+  
+  const startText = startSelect.options[startSelect.selectedIndex]?.text || 'Nicht gewählt';
+  const zielText = zielSelect.options[zielSelect.selectedIndex]?.text || 'Nicht gewählt';
+  
+  // Update visual circles
+  const visualStart = document.getElementById('visual-start');
+  const visualTarget = document.getElementById('visual-target');
+  
+  if (startSelect.value) {
+    visualStart.textContent = '✓';
+  } else {
+    visualStart.textContent = '?';
+  }
+  
+  if (zielSelect.value) {
+    visualTarget.textContent = '✓';
+  } else {
+    visualTarget.textContent = '?';
+  }
+  
+  // Update text labels
+  document.getElementById('visual-start-text').textContent = startText === '-- Bitte wählen --' ? 'Nicht gewählt' : startText.substring(0, 30) + (startText.length > 30 ? '...' : '');
+  document.getElementById('visual-target-text').textContent = zielText === '-- Bitte wählen --' ? 'Nicht gewählt' : zielText.substring(0, 30) + (zielText.length > 30 ? '...' : '');
+}
 
-                <div class="card">
-                    <h3>📗 Mit Mittlerer Reife</h3>
-                    <p><strong>Deine Möglichkeiten:</strong></p>
-                    <ul>
-                        <li>Duale Ausbildung</li>
-                        <li>Berufskolleg</li>
-                        <li>Berufliches Gymnasium</li>
-                        <li>Fachschule</li>
-                        <li>Fachhochschulreife / Abitur</li>
-                    </ul>
-                    <p><em>Hier würden alle Details aus dem PDF stehen...</em></p>
-                </div>
-            </div>
+// Add event listeners to selects
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('start').addEventListener('change', updateVisuals);
+  document.getElementById('ziel').addEventListener('change', updateVisuals);
+});
 
-            <h3 style="margin-top: 40px;">📞 Wichtige Anlaufstellen:</h3>
+// ==================== BILDUNGSWEGE DATENBANK ====================
 
-            <table class="info-table">
-                <tr>
-                    <th>Einrichtung</th>
-                    <th>Angebot</th>
-                    <th>Kontakt</th>
-                </tr>
-                <tr>
-                    <td>Agentur für Arbeit</td>
-                    <td>Berufsberatung, Ausbildungsvermittlung</td>
-                    <td>0800 4 5555 00</td>
-                </tr>
-                <tr>
-                    <td>Jobcenter</td>
-                    <td>Unterstützung bei Ausbildungssuche</td>
-                    <td>Lokale Rufnummer</td>
-                </tr>
-                <tr>
-                    <td>IHK / Handwerkskammer</td>
-                    <td>Ausbildungsberatung, Lehrstellenbörse</td>
-                    <td>www.ihk.de</td>
-                </tr>
-            </table>
-            <p><em>Hier würden alle Anlaufstellen aus dem PDF stehen...</em></p>
+const paths = {
+  // ============ OHNE ABSCHLUSS ============
+  ohneAbschluss: {
+    hauptschulabschluss: [
+      {
+        title: "VAB (Vorqualifizierungsjahr Arbeit/Beruf)",
+        steps: ["Ohne Abschluss", "VAB + Prüfung", "Hauptschulabschluss"],
+        duration: "1 Jahr",
+        note: "Im VAB wird berufliche Orientierung geboten und der Hauptschulabschluss kann über eine Prüfung erworben werden.",
+        recommended: true
+      },
+      {
+        title: "AV (Ausbildungsvorbereitung)",
+        steps: ["Ohne Abschluss", "AV + Prüfung", "Hauptschulabschluss"],
+        duration: "1 Jahr",
+        note: "Die AV bereitet auf eine Berufsausbildung vor und ermöglicht den Erwerb eines dem Hauptschulabschluss gleichwertigen Bildungsstands.",
+        recommended: true
+      },
+      {
+        title: "AVdual (Ausbildungsvorbereitung dual)",
+        steps: ["Ohne Abschluss", "AVdual + Prüfung", "Hauptschulabschluss"],
+        duration: "1-2 Jahre",
+        note: "AVdual kombiniert schulisches Lernen mit Betriebspraktika. Der Hauptschulabschluss wird über eine Prüfung erworben.",
+        recommended: true
+      },
+      {
+        title: "1-jährige Berufsfachschule (1BFS)",
+        steps: ["Ohne Abschluss", "1-jährige Berufsfachschule", "Hauptschulabschluss"],
+        duration: "1 Jahr",
+        note: "Mit erfolgreichem Abschluss der 1BFS wird ein dem Hauptschulabschluss gleichwertiger Bildungsstand erlangt.",
+        recommended: true
+      },
+      {
+        title: "Ausbildung Alltagsbetreuer/in",
+        steps: ["Ohne Abschluss", "Berufsfachschule Alltagsbetreuung", "Berufsabschluss + Hauptschulabschluss"],
+        duration: "Individuell",
+        note: "Die Ausbildung kann ohne Hauptschulabschluss begonnen werden. Der erfolgreiche Abschluss schließt einen dem Hauptschulabschluss gleichwertigen Bildungsstand ein."
+      },
+      {
+        title: "Über duale Ausbildung",
+        steps: ["Ohne Abschluss", "Duale Ausbildung", "Berufsabschluss + Hauptschulabschluss"],
+        duration: "2-3,5 Jahre",
+        note: "Mit dem erfolgreichen Abschluss einer dualen Ausbildung wird ein dem Hauptschulabschluss gleichwertiger Bildungsstand erworben."
+      }
+    ],
+    mittlereReife: [
+      {
+        title: "Über Hauptschulabschluss und 2BFS",
+        steps: ["Ohne Abschluss", "AVdual/VAB/AV", "Hauptschulabschluss", "2-jährige Berufsfachschule", "Mittlere Reife"],
+        duration: "3-4 Jahre",
+        note: "Zunächst Hauptschulabschluss erwerben, dann über die 2BFS zur Fachschulreife (Mittlere Reife).",
+        recommended: true
+      },
+      {
+        title: "Über Hauptschulabschluss und Modell 9+3",
+        steps: ["Ohne Abschluss", "AVdual/VAB", "Hauptschulabschluss", "Duale Ausbildung (3 Jahre, Ø 2,5)", "Mittlere Reife"],
+        duration: "4-5 Jahre",
+        note: "Mit guten Leistungen in der Ausbildung kann ein dem Realschulabschluss gleichwertiger Bildungsstand zuerkannt werden."
+      }
+    ],
+    fachhochschulreife: [
+      {
+        title: "Über Hauptschul- und Mittlere Reife",
+        steps: ["Ohne Abschluss", "Hauptschulabschluss", "Mittlere Reife", "Berufskolleg", "Fachhochschulreife"],
+        duration: "5-7 Jahre",
+        note: "Mehrstufiger Weg mit Zwischenschritten."
+      }
+    ],
+    abitur: [
+      {
+        title: "Über alle Zwischenschritte",
+        steps: ["Ohne Abschluss", "Hauptschulabschluss", "Mittlere Reife", "Berufliches Gymnasium", "Abitur"],
+        duration: "7-9 Jahre",
+        note: "Mit jedem Abschluss gibt es immer einen Anschluss - auch bis zum Abitur."
+      }
+    ],
+    berufsabschluss: [
+      {
+        title: "Direkte duale Ausbildung (ohne Abschluss möglich)",
+        steps: ["Ohne Abschluss", "Duale Ausbildung", "Berufsabschluss"],
+        duration: "2-3,5 Jahre",
+        note: "In manchen Berufen ist eine Ausbildung auch ohne Schulabschluss möglich.",
+        recommended: true
+      },
+      {
+        title: "Über Hauptschulabschluss",
+        steps: ["Ohne Abschluss", "AVdual/VAB", "Hauptschulabschluss", "Duale Ausbildung", "Berufsabschluss"],
+        duration: "3,5-5,5 Jahre",
+        note: "Mit Hauptschulabschluss verbessern sich die Chancen auf einen Ausbildungsplatz deutlich."
+      }
+    ],
+    meister: [
+      {
+        title: "Über Berufsabschluss zur Aufstiegsfortbildung",
+        steps: ["Ohne Abschluss", "Hauptschulabschluss", "Ausbildung", "Berufspraxis", "Meister/Techniker/Fachwirt"],
+        duration: "8-12 Jahre",
+        note: "Mit Abschluss, immer Anschluss - bis zur höchsten beruflichen Qualifikation."
+      }
+    ],
+    studium: [
+      {
+        title: "Über Abitur zum Studium",
+        steps: ["Ohne Abschluss", "Hauptschulabschluss", "Mittlere Reife", "Abitur", "Studium"],
+        duration: "10+ Jahre",
+        note: "Auch ohne Schulabschluss ist der Weg bis zum Studium möglich."
+      },
+      {
+        title: "Über berufliche Qualifikation",
+        steps: ["Ohne Abschluss", "Hauptschulabschluss", "Ausbildung", "Berufspraxis (3 Jahre)", "Studium ohne Abitur"],
+        duration: "9+ Jahre",
+        note: "Mit abgeschlossener Berufsausbildung und Berufserfahrung ist ein Studium auch ohne Abitur möglich."
+      }
+    ]
+  },
+
+  // ============ SBBZ ============
+  sbbz: {
+    bve: [
+      {
+        title: "Berufsvorbereitende Einrichtung (BVE)",
+        steps: ["SBBZ", "BVE"],
+        duration: "2 Jahre",
+        note: "SBBZ-spezifisches Angebot: Die BVE bereitet auf eine Beschäftigung auf dem allgemeinen Arbeitsmarkt vor.",
+        recommended: true
+      }
+    ],
+    vabKF: [
+      {
+        title: "VAB-KF (Kooperative Form)",
+        steps: ["SBBZ", "VAB-KF"],
+        duration: "1 Jahr",
+        note: "SBBZ-spezifisches Angebot: Vorbereitung auf Ausbildung oder Beschäftigung.",
+        recommended: true
+      }
+    ],
+    sonderberufsschule: [
+      {
+        title: "Sonderberufsschule",
+        steps: ["SBBZ", "Sonderberufsschule", "Berufsabschluss"],
+        duration: "Individuell",
+        note: "SBBZ-spezifisches Angebot: Ausbildung speziell für Menschen mit Behinderung.",
+        recommended: true
+      }
+    ],
+    hauptschulabschluss: [
+      {
+        title: "Direkter Weg über SBBZ",
+        steps: ["SBBZ", "Hauptschulabschluss"],
+        duration: "Individuell",
+        note: "An manchen SBBZ kann der Hauptschulabschluss direkt erworben werden (abhängig vom Förderschwerpunkt).",
+        recommended: true
+      },
+      {
+        title: "VAB mit Prüfung",
+        steps: ["SBBZ", "VAB + Prüfung", "Hauptschulabschluss"],
+        duration: "1 Jahr",
+        note: "Im VAB wird berufliche Orientierung geboten und der Hauptschulabschluss kann über eine Prüfung erworben werden."
+      },
+      {
+        title: "AV mit Prüfung",
+        steps: ["SBBZ", "AV + Prüfung", "Hauptschulabschluss"],
+        duration: "1 Jahr",
+        note: "Die AV bereitet auf eine Berufsausbildung vor und ermöglicht den Erwerb des Hauptschulabschlusses."
+      },
+      {
+        title: "AVdual mit Prüfung",
+        steps: ["SBBZ", "AVdual + Prüfung", "Hauptschulabschluss"],
+        duration: "1-2 Jahre",
+        note: "AVdual kombiniert schulisches Lernen mit Betriebspraktika und ermöglicht den Erwerb des Hauptschulabschlusses."
+      },
+      {
+        title: "1-jährige Berufsfachschule",
+        steps: ["SBBZ", "1-jährige Berufsfachschule", "Hauptschulabschluss"],
+        duration: "1 Jahr",
+        note: "Mit erfolgreichem Abschluss der 1BFS wird ein dem Hauptschulabschluss gleichwertiger Bildungsstand erlangt."
+      },
+      {
+        title: "Über duale Ausbildung",
+        steps: ["SBBZ", "Duale Ausbildung mit Unterstützung", "Berufsabschluss + Hauptschulabschluss"],
+        duration: "2-3,5 Jahre",
+        note: "Mit Unterstützung durch Berufsberatung und ggf. Reha-Maßnahmen."
+      }
+    ],
+    mittlereReife: [
+      {
+        title: "Über Hauptschulabschluss und 2BFS",
+        steps: ["SBBZ", "Hauptschulabschluss", "2-jährige Berufsfachschule", "Mittlere Reife"],
+        duration: "2+ Jahre",
+        note: "Bei entsprechendem Förderschwerpunkt: Zunächst Hauptschulabschluss, dann 2BFS.",
+        recommended: true
+      },
+      {
+        title: "Über Ausbildung und Modell 9+3",
+        steps: ["SBBZ", "Hauptschulabschluss", "Duale Ausbildung (3 Jahre, Ø 2,5)", "Mittlere Reife"],
+        duration: "4+ Jahre",
+        note: "Mit guten Leistungen in der Ausbildung kann ein dem Realschulabschluss gleichwertiger Bildungsstand zuerkannt werden."
+      }
+    ],
+    fachhochschulreife: [
+      {
+        title: "Über Hauptschul- und Mittlere Reife",
+        steps: ["SBBZ", "Hauptschulabschluss", "Mittlere Reife", "Berufskolleg", "Fachhochschulreife"],
+        duration: "5-7 Jahre",
+        note: "Mit entsprechendem Förderschwerpunkt und Unterstützung realistisch erreichbar."
+      }
+    ],
+    abitur: [
+      {
+        title: "Über alle Bildungsstufen",
+        steps: ["SBBZ", "Hauptschulabschluss", "Mittlere Reife", "Berufliches Gymnasium", "Abitur"],
+        duration: "6-9 Jahre",
+        note: "Mit entsprechendem Förderschwerpunkt (z.B. Hören, Sehen, körperlich-motorische Entwicklung) und Unterstützung möglich."
+      }
+    ],
+    berufsabschluss: [
+      {
+        title: "Duale Ausbildung mit Unterstützung",
+        steps: ["SBBZ", "Hauptschulabschluss", "Duale Ausbildung + Unterstützung", "Berufsabschluss"],
+        duration: "3-4 Jahre",
+        note: "Mit Unterstützung durch Berufsberatung und ggf. Reha-Maßnahmen, Hilfsmitteln am Arbeitsplatz.",
+        recommended: true
+      },
+      {
+        title: "Fachpraktiker-Ausbildung (theoriereduziert)",
+        steps: ["SBBZ", "Fachpraktiker-Ausbildung", "Berufsabschluss"],
+        duration: "2-3 Jahre",
+        note: "SBBZ-spezifisches Angebot: Theoriereduzierte Ausbildung für Menschen mit Lernbehinderung.",
+        recommended: true
+      },
+      {
+        title: "Ausbildung im Berufsbildungswerk",
+        steps: ["SBBZ", "Berufsbildungswerk", "Berufsabschluss"],
+        duration: "2-3,5 Jahre",
+        note: "SBBZ-spezifisches Angebot: Spezialisierte Ausbildung mit umfassender Unterstützung.",
+        recommended: true
+      }
+    ],
+    meister: [
+      {
+        title: "Über Ausbildung zur Aufstiegsfortbildung",
+        steps: ["SBBZ", "Hauptschulabschluss", "Ausbildung", "Berufspraxis", "Meister/Techniker"],
+        duration: "8-12 Jahre",
+        note: "Mit entsprechender Unterstützung und abhängig vom Förderschwerpunkt möglich."
+      }
+    ],
+    studium: [
+      {
+        title: "Über Abitur",
+        steps: ["SBBZ", "Hauptschulabschluss", "Mittlere Reife", "Abitur", "Studium mit Unterstützung"],
+        duration: "10+ Jahre",
+        note: "Abhängig vom Förderschwerpunkt. Hochschulen bieten Unterstützungsangebote für Studierende mit Behinderung."
+      }
+    ]
+  },
+
+  // ============ VABO ============
+  vabo: {
+    hauptschulabschluss: [
+      {
+        title: "VABO mit Deutschförderung → VAB",
+        steps: ["VABO (Deutschförderung B1)", "VAB + Prüfung", "Hauptschulabschluss"],
+        duration: "2 Jahre",
+        note: "Nach erfolgreicher Deutschförderung im VABO kann über VAB der Hauptschulabschluss erworben werden.",
+        recommended: true
+      },
+      {
+        title: "VABO → AV",
+        steps: ["VABO (Deutschförderung B1)", "AV + Prüfung", "Hauptschulabschluss"],
+        duration: "2 Jahre",
+        note: "Nach dem VABO ermöglicht die AV den Erwerb des Hauptschulabschlusses.",
+        recommended: true
+      },
+      {
+        title: "VABO → AVdual",
+        steps: ["VABO (Deutschförderung B1)", "AVdual + Prüfung", "Hauptschulabschluss"],
+        duration: "2-3 Jahre",
+        note: "Nach dem VABO kann über AVdual mit Betriebspraktika der Hauptschulabschluss erworben werden.",
+        recommended: true
+      },
+      {
+        title: "VABO → 1BFS",
+        steps: ["VABO (Deutschförderung B1)", "1-jährige Berufsfachschule", "Hauptschulabschluss"],
+        duration: "2 Jahre",
+        note: "Mit ausreichenden Deutschkenntnissen direkter Einstieg in die 1BFS möglich.",
+        recommended: true
+      },
+      {
+        title: "VABO → Ausbildung Alltagsbetreuer/in",
+        steps: ["VABO (Deutschförderung B1)", "Berufsfachschule Alltagsbetreuung", "Berufsabschluss + Hauptschulabschluss"],
+        duration: "2+ Jahre",
+        note: "Die Ausbildung kann nach VABO begonnen werden und schließt einen dem Hauptschulabschluss gleichwertigen Bildungsstand ein."
+      },
+      {
+        title: "VABO → Duale Ausbildung",
+        steps: ["VABO (Deutschförderung B1)", "Duale Ausbildung", "Berufsabschluss + Hauptschulabschluss"],
+        duration: "3,5-5 Jahre",
+        note: "Mit erfolgreichem Abschluss einer dualen Ausbildung wird ein dem Hauptschulabschluss gleichwertiger Bildungsstand erworben."
+      }
+    ],
+    mittlereReife: [
+      {
+        title: "VABO → Hauptschulabschluss → 2BFS",
+        steps: ["VABO (Deutschförderung B1)", "AVdual/VAB", "Hauptschulabschluss", "2-jährige Berufsfachschule", "Mittlere Reife"],
+        duration: "4-5 Jahre",
+        note: "Zunächst Deutsch lernen und Hauptschulabschluss erwerben, dann über die 2BFS zur Mittleren Reife.",
+        recommended: true
+      },
+      {
+        title: "VABO → Hauptschulabschluss → Modell 9+3",
+        steps: ["VABO (Deutschförderung B1)", "Hauptschulabschluss", "Duale Ausbildung (3 Jahre, Ø 2,5)", "Mittlere Reife"],
+        duration: "5-6 Jahre",
+        note: "Mit guten Leistungen in der Ausbildung kann ein dem Realschulabschluss gleichwertiger Bildungsstand zuerkannt werden."
+      }
+    ],
+    fachhochschulreife: [
+      {
+        title: "VABO → Mittlere Reife → Berufskolleg",
+        steps: ["VABO (Deutschförderung B1)", "Hauptschulabschluss", "Mittlere Reife", "Berufskolleg", "Fachhochschulreife"],
+        duration: "6-8 Jahre",
+        note: "Mehrstufiger Weg mit Zwischenschritten."
+      }
+    ],
+    abitur: [
+      {
+        title: "VABO → Mittlere Reife → Berufliches Gymnasium",
+        steps: ["VABO (Deutschförderung B1)", "Hauptschulabschluss", "Mittlere Reife", "Berufliches Gymnasium", "Abitur"],
+        duration: "7-9 Jahre",
+        note: "Mit jedem Abschluss gibt es immer einen Anschluss."
+      }
+    ],
+    berufsabschluss: [
+      {
+        title: "VABO → direkt zur Ausbildung",
+        steps: ["VABO (Deutschförderung B1)", "Duale Ausbildung", "Berufsabschluss"],
+        duration: "3,5-5 Jahre",
+        note: "In manchen Berufen ist eine Ausbildung nach VABO direkt möglich. Ggf. mit ausbildungsbegleitenden Hilfen (abH).",
+        recommended: true
+      },
+      {
+        title: "VABO → Hauptschulabschluss → Ausbildung",
+        steps: ["VABO (Deutschförderung B1)", "AVdual/VAB", "Hauptschulabschluss", "Duale Ausbildung", "Berufsabschluss"],
+        duration: "4,5-6,5 Jahre",
+        note: "Mit Hauptschulabschluss verbessern sich die Chancen auf einen Ausbildungsplatz."
+      }
+    ],
+    meister: [
+      {
+        title: "VABO → Ausbildung → Aufstiegsfortbildung",
+        steps: ["VABO (Deutschförderung B1)", "Hauptschulabschluss", "Ausbildung", "Berufspraxis", "Meister/Techniker"],
+        duration: "9-13 Jahre",
+        note: "Mit Abschluss, immer Anschluss - auch für zugewanderte Jugendliche."
+      }
+    ],
+    studium: [
+      {
+        title: "VABO → Abitur → Studium",
+        steps: ["VABO (Deutschförderung B1)", "Hauptschulabschluss", "Mittlere Reife", "Abitur", "Studium"],
+        duration: "11+ Jahre",
+        note: "Der Weg zum Studium ist auch nach VABO möglich."
+      }
+    ]
+  },
+
+  // ============ AVDUAL (als eigener Startpunkt) ============
+  avdual: {
+    hauptschulabschluss: [
+      {
+        title: "Hauptschulabschluss über AVdual",
+        steps: ["AVdual + Prüfung", "Hauptschulabschluss"],
+        duration: "1-2 Jahre",
+        note: "Im AVdual kann der Hauptschulabschluss erworben oder verbessert werden.",
+        recommended: true
+      }
+    ],
+    berufsabschluss: [
+      {
+        title: "Direkt in die Ausbildung",
+        steps: ["AVdual", "Duale Ausbildung", "Berufsabschluss"],
+        duration: "2-3,5 Jahre",
+        note: "Nach erfolgreichem AVdual-Abschluss kann eine Berufsausbildung begonnen werden.",
+        recommended: true
+      }
+    ]
+  },
+
+  // ============ HAUPTSCHULABSCHLUSS ============
+  hauptschulabschluss: {
+    mittlereReife: [
+      {
+        title: "2-jährige Berufsfachschule (2BFS)",
+        steps: ["Hauptschulabschluss", "2-jährige Berufsfachschule", "Mittlere Reife"],
+        duration: "2 Jahre",
+        note: "Die 2BFS führt zur Fachschulreife (Mittlere Reife) und vermittelt berufliche Grundbildung.",
+        recommended: true
+      },
+      {
+        title: "10. Klasse Werkrealschule",
+        steps: ["Hauptschulabschluss", "10. Klasse Werkrealschule", "Werkrealschulabschluss"],
+        duration: "1 Jahr",
+        note: "Nach Klasse 9 kann die 10. Klasse der Werkrealschule besucht werden."
+      },
+      {
+        title: "10. Klasse Realschule",
+        steps: ["Hauptschulabschluss", "10. Klasse Realschule", "Realschulabschluss"],
+        duration: "1 Jahr",
+        note: "Bei entsprechenden Noten kann die 10. Klasse der Realschule besucht werden."
+      },
+      {
+        title: "10. Klasse Gemeinschaftsschule",
+        steps: ["Hauptschulabschluss", "10. Klasse Gemeinschaftsschule", "Realschulabschluss"],
+        duration: "1 Jahr",
+        note: "Die Gemeinschaftsschule bietet die Möglichkeit, den Realschulabschluss zu erreichen."
+      },
+      {
+        title: "Mit dualer Ausbildung (Modell 9+3)",
+        steps: ["Hauptschulabschluss", "Duale Ausbildung (3 Jahre, Ø 2,5)", "Berufsabschluss + Mittlere Reife"],
+        duration: "3 Jahre",
+        note: "Bei guten Leistungen (Notendurchschnitt 2,5) kann ein dem Realschulabschluss gleichwertiger Bildungsstand zuerkannt werden.",
+        recommended: true
+      },
+      {
+        title: "Mit dualer Ausbildung (KMK-Modell)",
+        steps: ["Hauptschulabschluss", "Duale Ausbildung (mind. 2 Jahre, Ø 3,0)", "Berufsabschluss + Mittlere Reife"],
+        duration: "2-3 Jahre",
+        note: "Bei Notenschnitt 3,0 in der Berufsschule und 5 Jahren Fremdsprachenunterricht wird ein dem Realschulabschluss gleichwertiger Bildungsstand zuerkannt."
+      },
+      {
+        title: "Berufsaufbauschule (BAS)",
+        steps: ["Hauptschulabschluss", "Duale Ausbildung", "Berufsaufbauschule (1 Jahr)", "Mittlere Reife"],
+        duration: "4-5 Jahre",
+        note: "Mit abgeschlossener Berufsausbildung kann über die BAS der mittlere Bildungsabschluss erworben werden."
+      }
+    ],
+    fachhochschulreife: [
+      {
+        title: "Über Mittlere Reife zum Berufskolleg",
+        steps: ["Hauptschulabschluss", "2BFS/10. Klasse", "Mittlere Reife", "Berufskolleg", "Fachhochschulreife"],
+        duration: "4-5 Jahre",
+        note: "Zunächst Mittlere Reife erwerben, dann 2 Jahre Berufskolleg.",
+        recommended: true
+      },
+      {
+        title: "Über Ausbildung und BKFH",
+        steps: ["Hauptschulabschluss", "Mittlere Reife", "Ausbildung", "BKFH (1 Jahr)", "Fachhochschulreife"],
+        duration: "6-8 Jahre",
+        note: "Nach Ausbildung kann in einem Jahr die Fachhochschulreife erworben werden."
+      }
+    ],
+    abitur: [
+      {
+        title: "Über Mittlere Reife zum Beruflichen Gymnasium",
+        steps: ["Hauptschulabschluss", "Mittlere Reife", "Berufliches Gymnasium", "Abitur"],
+        duration: "5 Jahre",
+        note: "Mit Mittlerer Reife Zugang zum dreijährigen beruflichen Gymnasium.",
+        recommended: true
+      },
+      {
+        title: "Über Ausbildung zur Berufsoberschule",
+        steps: ["Hauptschulabschluss", "Mittlere Reife", "Ausbildung", "Berufsoberschule (2 Jahre)", "Abitur"],
+        duration: "7-9 Jahre",
+        note: "Mit abgeschlossener Berufsausbildung zur fachgebundenen oder allgemeinen Hochschulreife."
+      }
+    ],
+    berufsabschluss: [
+      {
+        title: "Duale Ausbildung",
+        steps: ["Hauptschulabschluss", "Duale Ausbildung", "Berufsabschluss"],
+        duration: "2-3,5 Jahre",
+        note: "Mit Hauptschulabschluss können viele Ausbildungsberufe erlernt werden.",
+        recommended: true
+      },
+      {
+        title: "2-jährige Berufsfachschule",
+        steps: ["Hauptschulabschluss", "Berufsfachschule (2-jährig)", "Berufsabschluss"],
+        duration: "2 Jahre",
+        note: "Schulische Berufsausbildung in verschiedenen Berufsfeldern."
+      },
+      {
+        title: "1-jährige Berufsfachschule + Ausbildung",
+        steps: ["Hauptschulabschluss", "1-jährige Berufsfachschule", "Duale Ausbildung (verkürzt)", "Berufsabschluss"],
+        duration: "3,5-4,5 Jahre",
+        note: "Die 1BFS kann als erstes Ausbildungsjahr in Handwerksberufen angerechnet werden."
+      }
+    ],
+    meister: [
+      {
+        title: "Über Ausbildung zur Aufstiegsfortbildung",
+        steps: ["Hauptschulabschluss", "Duale Ausbildung", "Berufspraxis", "Meister/Techniker/Fachwirt"],
+        duration: "6-10 Jahre",
+        note: "Mit Abschluss, immer Anschluss - bis zur höchsten beruflichen Qualifikation."
+      }
+    ],
+    studium: [
+      {
+        title: "Über Abitur",
+        steps: ["Hauptschulabschluss", "Mittlere Reife", "Abitur", "Studium"],
+        duration: "8+ Jahre",
+        note: "Der klassische Weg über alle Bildungsstufen."
+      },
+      {
+        title: "Über berufliche Qualifikation (ohne Abitur)",
+        steps: ["Hauptschulabschluss", "Mittlere Reife", "Ausbildung", "Berufspraxis (3 Jahre)", "Studium ohne Abitur"],
+        duration: "9+ Jahre",
+        note: "Für beruflich Qualifizierte ist ein Studium ohne Abitur möglich."
+      }
+    ]
+  },
+
+  // ============ MITTLERE REIFE ============
+  mittlereReife: {
+    fachhochschulreife: [
+      {
+        title: "2-jähriges Berufskolleg",
+        steps: ["Mittlere Reife", "Berufskolleg (2 Jahre)", "Fachhochschulreife"],
+        duration: "2 Jahre",
+        note: "Das 2-jährige Berufskolleg führt zur Fachhochschulreife und vermittelt berufliche Kenntnisse.",
+        recommended: true
+      },
+      {
+        title: "Berufskolleg I + II",
+        steps: ["Mittlere Reife", "Berufskolleg I (1 Jahr)", "Berufskolleg II (1 Jahr)", "Fachhochschulreife + Assistentenabschluss"],
+        duration: "2 Jahre",
+        note: "Nach BK I kann bei guten Noten ins BK II gewechselt werden."
+      },
+      {
+        title: "Mit dualer Ausbildung + Zusatzunterricht",
+        steps: ["Mittlere Reife", "Duale Ausbildung + Zusatzunterricht", "Berufsabschluss + Fachhochschulreife"],
+        duration: "3 Jahre",
+        note: "Während der Ausbildung kann durch Zusatzunterricht die Fachhochschulreife erworben werden."
+      },
+      {
+        title: "1-jähriges Berufskolleg nach Ausbildung (BKFH)",
+        steps: ["Mittlere Reife", "Duale Ausbildung", "Berufskolleg zum Erwerb der FH-Reife (1 Jahr)", "Fachhochschulreife"],
+        duration: "4-5 Jahre",
+        note: "Nach abgeschlossener Berufsausbildung kann in einem Jahr die Fachhochschulreife erworben werden."
+      },
+      {
+        title: "2-jährige Fachschule",
+        steps: ["Mittlere Reife", "Duale Ausbildung", "Fachschule (2 Jahre)", "Fachhochschulreife + Fortbildungsabschluss"],
+        duration: "5-7 Jahre",
+        note: "An zweijährigen Fachschulen kann die Fachhochschulreife erworben werden."
+      }
+    ],
+    abitur: [
+      {
+        title: "Berufliches Gymnasium (3-jährig)",
+        steps: ["Mittlere Reife", "Berufliches Gymnasium (3 Jahre)", "Abitur"],
+        duration: "3 Jahre",
+        note: "Das berufliche Gymnasium führt zur allgemeinen Hochschulreife mit beruflichem Schwerpunkt (6 Richtungen verfügbar).",
+        recommended: true
+      },
+      {
+        title: "Aufbaugymnasium",
+        steps: ["Mittlere Reife", "Aufbaugymnasium (3 Jahre)", "Abitur"],
+        duration: "3 Jahre",
+        note: "Das Aufbaugymnasium ist speziell für Realschulabsolventen ('Realschulaufsetzer')."
+      },
+      {
+        title: "Allgemeinbildendes Gymnasium",
+        steps: ["Mittlere Reife", "Gymnasium Klasse 11-13", "Abitur"],
+        duration: "3 Jahre",
+        note: "Bei entsprechender Qualifikation ist der Wechsel ans allgemeinbildende Gymnasium möglich."
+      },
+      {
+        title: "Gymnasiale Oberstufe Gemeinschaftsschule",
+        steps: ["Mittlere Reife", "Gemeinschaftsschule Oberstufe (3 Jahre)", "Abitur"],
+        duration: "3 Jahre",
+        note: "Die Gemeinschaftsschule bietet eine gymnasiale Oberstufe an."
+      },
+      {
+        title: "Berufsoberschule (BOS) nach Ausbildung",
+        steps: ["Mittlere Reife", "Duale Ausbildung", "Berufsoberschule Oberstufe (2 Jahre)", "Abitur"],
+        duration: "5-7 Jahre",
+        note: "Mit abgeschlossener Berufsausbildung führt die BOS zur fachgebundenen oder allgemeinen Hochschulreife."
+      }
+    ],
+    berufsabschluss: [
+      {
+        title: "Duale Ausbildung",
+        steps: ["Mittlere Reife", "Duale Ausbildung", "Berufsabschluss"],
+        duration: "2-3,5 Jahre",
+        note: "Mit Mittlerer Reife stehen nahezu alle Ausbildungsberufe offen.",
+        recommended: true
+      },
+      {
+        title: "Schulische Berufsausbildung",
+        steps: ["Mittlere Reife", "Berufsfachschule/Berufskolleg", "Berufsabschluss"],
+        duration: "2-3 Jahre",
+        note: "Vollzeitschulische Ausbildung z.B. als Erzieher/in, Pflegefachmann/-frau oder technische/r Assistent/in."
+      },
+      {
+        title: "1-jährige Berufsfachschule + Ausbildung",
+        steps: ["Mittlere Reife", "1-jährige Berufsfachschule", "Duale Ausbildung (verkürzt)", "Berufsabschluss"],
+        duration: "3,5-4,5 Jahre",
+        note: "Die 1BFS kann bei Ausbildungsplatzzusage als erstes Ausbildungsjahr angerechnet werden."
+      }
+    ],
+    meister: [
+      {
+        title: "Über Ausbildung zur Aufstiegsfortbildung",
+        steps: ["Mittlere Reife", "Duale Ausbildung", "Berufspraxis", "Meister/Techniker/Fachwirt"],
+        duration: "6-9 Jahre",
+        note: "Höchste berufliche Qualifikation - gleichgestellt mit Bachelor."
+      }
+    ],
+    studium: [
+      {
+        title: "Klassischer Weg über Abitur",
+        steps: ["Mittlere Reife", "Abitur (3 Jahre)", "Studium"],
+        duration: "6+ Jahre",
+        note: "Abitur berechtigt zum Studium aller Studiengänge.",
+        recommended: true
+      },
+      {
+        title: "Weg über Fachhochschulreife",
+        steps: ["Mittlere Reife", "Berufskolleg (2 Jahre)", "Fachhochschulreife", "Studium (FH/DHBW)"],
+        duration: "5+ Jahre",
+        note: "Studium an Fachhochschulen und Dualen Hochschulen."
+      },
+      {
+        title: "Über berufliche Qualifikation (ohne Abitur)",
+        steps: ["Mittlere Reife", "Ausbildung", "Berufspraxis (3 Jahre)", "Studium ohne Abitur"],
+        duration: "8+ Jahre",
+        note: "Für beruflich Qualifizierte ist ein Studium ohne Abitur möglich."
+      }
+    ]
+  },
+
+  // ============ FACHHOCHSCHULREIFE ============
+  fachhochschulreife: {
+    abitur: [
+      {
+        title: "Berufliches Gymnasium Klasse 13",
+        steps: ["Fachhochschulreife", "Berufliches Gymnasium Klasse 13", "Abitur"],
+        duration: "1 Jahr",
+        note: "Mit Fachhochschulreife kann die Klasse 13 des beruflichen Gymnasiums besucht werden.",
+        recommended: true
+      },
+      {
+        title: "Berufsoberschule Oberstufe Klasse 2",
+        steps: ["Fachhochschulreife + Ausbildung", "Berufsoberschule Klasse 2", "Abitur"],
+        duration: "1 Jahr",
+        note: "Bei guter Fachhochschulreife und abgeschlossener Ausbildung direkter Einstieg in Klasse 2 der BOS möglich."
+      }
+    ],
+    berufsabschluss: [
+      {
+        title: "Duale Ausbildung",
+        steps: ["Fachhochschulreife", "Duale Ausbildung", "Berufsabschluss"],
+        duration: "2-3 Jahre",
+        note: "Eine Berufsausbildung ist auch mit Fachhochschulreife möglich und sinnvoll."
+      }
+    ],
+    meister: [
+      {
+        title: "Über Ausbildung zur Aufstiegsfortbildung",
+        steps: ["Fachhochschulreife", "Duale Ausbildung", "Berufspraxis", "Meister/Techniker/Fachwirt"],
+        duration: "6-9 Jahre",
+        note: "Höchste berufliche Qualifikation."
+      }
+    ],
+    bachelor: [
+      {
+        title: "Studium an Hochschule für angewandte Wissenschaften",
+        steps: ["Fachhochschulreife", "Hochschule/FH/DHBW", "Bachelor"],
+        duration: "3-4 Jahre",
+        note: "Die Fachhochschulreife berechtigt zum Studium an Hochschulen für angewandte Wissenschaften und Dualen Hochschulen.",
+        recommended: true
+      },
+      {
+        title: "Duales Studium",
+        steps: ["Fachhochschulreife", "Duales Studium", "Bachelor + Berufsabschluss"],
+        duration: "3-4 Jahre",
+        note: "Kombination von Praxis im Betrieb und Theorie an der Hochschule."
+      }
+    ]
+  },
+
+  // ============ ABITUR ============
+  abitur: {
+    berufsabschluss: [
+      {
+        title: "Duale Ausbildung",
+        steps: ["Abitur", "Duale Ausbildung", "Berufsabschluss"],
+        duration: "2-3 Jahre",
+        note: "Viele Abiturienten entscheiden sich bewusst für eine Berufsausbildung, oft mit verkürzter Ausbildungszeit."
+      },
+      {
+        title: "Schulische Berufsausbildung",
+        steps: ["Abitur", "Berufsfachschule/Berufskolleg", "Berufsabschluss"],
+        duration: "2-3 Jahre",
+        note: "Schulische Ausbildungen z.B. als Erzieher/in oder technische/r Assistent/in."
+      }
+    ],
+    meister: [
+      {
+        title: "Über Ausbildung zur Aufstiegsfortbildung",
+        steps: ["Abitur", "Duale Ausbildung", "Berufspraxis", "Meister/Techniker/Fachwirt"],
+        duration: "6-9 Jahre",
+        note: "Auch mit Abitur kann der Weg über eine Berufsausbildung zur Aufstiegsfortbildung führen."
+      }
+    ],
+    bachelor: [
+      {
+        title: "Direktes Studium",
+        steps: ["Abitur", "Universität/Hochschule", "Bachelor"],
+        duration: "3-4 Jahre",
+        note: "Mit Abitur können alle Studiengänge an Universitäten und Hochschulen studiert werden.",
+        recommended: true
+      },
+      {
+        title: "Duales Studium",
+        steps: ["Abitur", "Duales Studium", "Bachelor + Berufsabschluss"],
+        duration: "3-4 Jahre",
+        note: "Das duale Studium kombiniert Praxis im Betrieb mit Theorie an der Hochschule."
+      }
+    ]
+  }
+};
+
+// ==================== AUTOMATISCHE WEGE-ABLEITUNG UND ERGÄNZUNG ====================
+// Funktion zur Ergänzung fehlender Wege durch logische Ableitung
+function erweiterePathsMitAbleitungen() {
+  // Äquivalenz-Gruppen definieren
+  const aequivalenzGruppen = {
+    ohneAbschluss: ['ohneAbschluss'],  // Basis
+    // Weitere Gruppen werden unten manuell verarbeitet
+  };
+  
+  // VABO-spezifische Ergänzungen - VABO braucht immer +1 Jahr für Deutschförderung
+  // Fehlende Wege für VABO ergänzen, basierend auf ohneAbschluss
+  const ohneAbschlussPaths = paths.ohneAbschluss;
+  
+  // Prüfe und ergänze fehlende VABO-Wege
+  for (const ziel in ohneAbschlussPaths) {
+    if (!paths.vabo[ziel]) {
+      paths.vabo[ziel] = [];
+    }
+    
+    // Kopiere nur die wichtigsten 2-3 Wege von ohneAbschluss zu VABO
+    const relevantePaths = ohneAbschlussPaths[ziel].filter(p => p.recommended).slice(0, 2);
+    if (relevantePaths.length === 0 && ohneAbschlussPaths[ziel].length > 0) {
+      // Falls keine empfohlenen Wege, nimm die ersten 2
+      relevantePaths.push(...ohneAbschlussPaths[ziel].slice(0, 2));
+    }
+    
+    relevantePaths.forEach(originalPath => {
+      // Verbesserte Duplikatsprüfung: Prüfe auf ähnliche Steps
+      const existiert = paths.vabo[ziel].some(existingPath => {
+        // Vergleiche die zweiten Steps (nach VABO)
+        if (existingPath.steps.length < 2 || originalPath.steps.length < 2) return false;
+        const existingSecondStep = existingPath.steps[1].toLowerCase();
+        const originalSecondStep = originalPath.steps[1].toLowerCase();
+        // Prüfe ob die Steps sehr ähnlich sind
+        return existingSecondStep.includes(originalSecondStep.substring(0, 10)) || 
+               originalSecondStep.includes(existingSecondStep.substring(0, 10));
+      });
+      
+      if (!existiert) {
+        // Erstelle VABO-Version mit angepassten Steps
+        const vaboPath = {
+          title: "VABO → " + originalPath.title,
+          steps: ["VABO (Deutschförderung B1)", ...originalPath.steps.slice(1)],
+          duration: erhoeheZeit(originalPath.duration, 1),
+          note: "Nach VABO-Deutschförderung: " + originalPath.note,
+          recommended: originalPath.recommended
+        };
+        paths.vabo[ziel].push(vaboPath);
+      }
+    });
+  }
+  
+  // SBBZ-spezifische Ergänzungen
+  for (const ziel in ohneAbschlussPaths) {
+    if (!paths.sbbz[ziel]) {
+      paths.sbbz[ziel] = [];
+    }
+    
+    // Nur realistische Wege für SBBZ (nicht alle ohneAbschluss-Wege)
+    // Ziele die SBBZ erreichen kann: hauptschulabschluss, mittlereReife, berufsabschluss
+    // und mit Unterstützung auch fachhochschulreife, abitur
+    const sbbzRealistische = ['hauptschulabschluss', 'mittlereReife', 'berufsabschluss', 'fachhochschulreife'];
+    
+    if (sbbzRealistische.includes(ziel) || ziel.includes('bve') || ziel.includes('vabKF') || ziel.includes('sonderberufsschule')) {
+      const relevantePaths = ohneAbschlussPaths[ziel].filter(p => p.recommended).slice(0, 2);
+      if (relevantePaths.length === 0 && ohneAbschlussPaths[ziel].length > 0) {
+        relevantePaths.push(...ohneAbschlussPaths[ziel].slice(0, 2));
+      }
+      
+      relevantePaths.forEach(originalPath => {
+        // Verbesserte Duplikatsprüfung für SBBZ
+        const existiert = paths.sbbz[ziel].some(existingPath => {
+          // Vergleiche die zweiten Steps (nach SBBZ)
+          if (existingPath.steps.length < 2 || originalPath.steps.length < 2) return false;
+          const existingSecondStep = existingPath.steps[1].toLowerCase();
+          const originalSecondStep = originalPath.steps[1].toLowerCase();
+          // Prüfe ob die Steps sehr ähnlich sind
+          return existingSecondStep.includes(originalSecondStep.substring(0, 10)) || 
+                 originalSecondStep.includes(existingSecondStep.substring(0, 10));
+        });
+        
+        if (!existiert && paths.sbbz[ziel].length < 6) { // Maximal 6 Wege pro Ziel für SBBZ
+          const sbbzPath = {
+            title: originalPath.title + " (mit Unterstützung)",
+            steps: ["SBBZ", ...originalPath.steps.slice(1)],
+            duration: originalPath.duration,
+            note: "Mit individueller Förderung und Unterstützung: " + originalPath.note,
+            recommended: originalPath.recommended
+          };
+          paths.sbbz[ziel].push(sbbzPath);
+        }
+      });
+    }
+  }
+}
+
+// Hilfsfunktion zur Zeiterhöhung
+function erhoeheZeit(dauer, jahre) {
+  if (!dauer) return dauer;
+  const match = dauer.match(/(\d+)(-(\d+))?\s*Jahre?/);
+  if (match) {
+    const min = parseInt(match[1]) + jahre;
+    const max = match[3] ? parseInt(match[3]) + jahre : null;
+    return max ? `${min}-${max} Jahre` : `${min} Jahre`;
+  }
+  return dauer;
+}
+
+// Wege erweitern beim Laden
+erweiterePathsMitAbleitungen();
+
+// ==================== SHOW PATHS FUNCTION ====================
+function showPaths() {
+  const start = document.getElementById("start").value;
+  const ziel = document.getElementById("ziel").value;
+  const resultDiv = document.getElementById("result");
+  
+  if (!start || !ziel) {
+    resultDiv.innerHTML = `
+      <div class="results-container">
+        <div class="results-header">⚠️ Bitte Auswahl treffen</div>
+        <div class="results-content">
+          <div class="info-box">
+            <p><strong>Hinweis:</strong> Bitte wähle sowohl deinen Start als auch dein Ziel aus, um die verfügbaren Bildungswege anzuzeigen.</p>
+          </div>
         </div>
+      </div>
+    `;
+    return;
+  }
+  
+  const availablePaths = paths[start]?.[ziel];
+  
+  if (!availablePaths || availablePaths.length === 0) {
+    resultDiv.innerHTML = `
+      <div class="results-container">
+        <div class="results-header">ℹ️ Zwischenschritte erforderlich</div>
+        <div class="results-content">
+          <div class="info-box">
+            <p><strong>Für dieses Ziel sind Zwischenschritte notwendig.</strong></p>
+            <p style="margin-top: 12px;"><strong>💡 Tipp:</strong> Wähle zunächst einen Zwischenschritt als Ziel aus (z.B. erst Hauptschulabschluss, dann Mittlere Reife). Mit Abschluss, immer Anschluss!</p>
+          </div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+  
+  let html = `
+    <div class="results-container">
+      <div class="results-header">
+        ✨ ${availablePaths.length} ${availablePaths.length === 1 ? 'Weg gefunden' : 'Wege gefunden'}
+      </div>
+      <div class="results-content">
+  `;
+  
+  availablePaths.forEach((path, index) => {
+    html += `
+      <div class="path-card">
+        <div class="path-card-header">
+          <div class="path-number-badge">${index + 1}</div>
+          <div class="path-title">${path.title}</div>
+          ${path.duration ? `<div class="duration-badge">⏱️ ${path.duration}</div>` : ''}
+        </div>
+        <div class="path-steps">
+    `;
+    
+    path.steps.forEach((step, stepIndex) => {
+      html += `<span class="step">${step}</span>`;
+      if (stepIndex < path.steps.length - 1) {
+        html += `<span class="arrow">→</span>`;
+      }
+    });
+    
+    html += `</div>`;
+    
+    if (path.note) {
+      html += `
+        <div class="path-note">
+          <strong>ℹ️ Hinweis:</strong> ${path.note}
+        </div>
+      `;
+    }
+    
+    html += `</div>`;
+  });
+  
+  html += `
+      <div class="info-box">
+        <p><strong>💡 Wichtig:</strong> Die angezeigten Wege sind die häufigsten Bildungspfade. Es können je nach individueller Situation auch weitere Möglichkeiten bestehen.</p>
+        <p style="margin-top: 10px;"><strong>Beratung nutzen:</strong> Für persönliche Bildungsberatung wende dich an die Berufsberatung der Agentur für Arbeit oder die Schulsozialarbeit.</p>
+      </div>
+    </div>
+  </div>
+  `;
+  
+  resultDiv.innerHTML = html;
+  resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
 
+function reset() {
+  document.getElementById("start").value = "";
+  document.getElementById("ziel").value = "";
+  document.getElementById("result").innerHTML = "";
+  updateVisuals();
+}
+
+// ==================== BERUFSWAHL QUIZ ====================
+let quizStarted = false;
+let currentQuestion = 0;
+let answers = {
+  interests: [],
+  workType: '',
+  field: '',
+  activities: []
+};
+
+const quizQuestions = [
+  {
+    question: "Was machst du gerne in deiner Freizeit?",
+    type: "multiple",
+    options: [
+      { text: "Mit dem Computer arbeiten", value: "computer" },
+      { text: "Sport treiben oder draußen sein", value: "sport" },
+      { text: "Basteln oder etwas bauen", value: "handwerk" },
+      { text: "Lesen oder schreiben", value: "kommunikation" },
+      { text: "Anderen helfen", value: "sozial" },
+      { text: "Kochen oder backen", value: "gastronomie" }
+    ],
+    key: "interests"
+  },
+  {
+    question: "Wie arbeitest du am liebsten?",
+    type: "single",
+    options: [
+      { text: "Mit meinen Händen / praktisch", value: "handwerk" },
+      { text: "Mit Menschen zusammen", value: "sozial" },
+      { text: "Am Computer", value: "it" },
+      { text: "Im Büro / am Schreibtisch", value: "buero" },
+      { text: "Draußen / in Bewegung", value: "outdoor" }
+    ],
+    key: "workType"
+  },
+  {
+    question: "Welcher Bereich interessiert dich am meisten?",
+    type: "single",
+    options: [
+      { text: "Technik & Maschinen", value: "technik" },
+      { text: "Gesundheit & Pflege", value: "gesundheit" },
+      { text: "Wirtschaft & Handel", value: "wirtschaft" },
+      { text: "Kreatives & Gestaltung", value: "kreativ" },
+      { text: "Natur & Umwelt", value: "natur" },
+      { text: "IT & Digitales", value: "it" }
+    ],
+    key: "field"
+  },
+  {
+    question: "Was würdest du gerne machen?",
+    type: "multiple",
+    options: [
+      { text: "Dinge reparieren", value: "reparieren" },
+      { text: "Verkaufen & beraten", value: "verkauf" },
+      { text: "Pflegen & betreuen", value: "pflege" },
+      { text: "Programmieren", value: "programmieren" },
+      { text: "Gestalten & designen", value: "design" },
+      { text: "Organisieren & planen", value: "organisation" }
+    ],
+    key: "activities"
+  }
+];
+
+function startQuiz() {
+  quizStarted = true;
+  currentQuestion = 0;
+  answers = { interests: [], workType: '', field: '', activities: [] };
+  document.getElementById('quiz-start').style.display = 'none';
+  document.getElementById('quiz-progress-section').style.display = 'block';
+  showQuestion();
+}
+
+function showQuestion() {
+  const question = quizQuestions[currentQuestion];
+  const progress = ((currentQuestion + 1) / quizQuestions.length) * 100;
+  document.getElementById('quiz-progress').style.width = progress + '%';
+  
+  let html = `
+    <div class="quiz-question">
+      <div class="quiz-question-number">Frage ${currentQuestion + 1} von ${quizQuestions.length}</div>
+      <h3>${question.question}</h3>
+      <div class="quiz-options">
+  `;
+  
+  question.options.forEach((option, index) => {
+    html += `
+      <div class="quiz-option" onclick="selectOption(${index}, '${question.type}', '${question.key}')">
+        ${option.text}
+      </div>
+    `;
+  });
+  
+  html += `
+      </div>
+      <div class="button-group" style="margin-top: 25px;">
+        ${currentQuestion > 0 ? '<button class="btn btn-secondary" style="flex: 1;" onclick="previousQuestion()">⬅️ Zurück</button>' : ''}
+        <button class="btn btn-primary" style="flex: 2;" onclick="nextQuestion()">
+          ${currentQuestion === quizQuestions.length - 1 ? '🎯 Ergebnis anzeigen' : '➡️ Weiter'}
+        </button>
+      </div>
+      <button class="btn btn-secondary" style="margin-top: 15px; width: 100%;" onclick="restartQuiz()">
+        🔄 Von vorne beginnen
+      </button>
+    </div>
+  `;
+  
+  document.getElementById('quiz-content').innerHTML = html;
+}
+
+function selectOption(index, type, key) {
+  const options = document.querySelectorAll('.quiz-option');
+  const question = quizQuestions[currentQuestion];
+  const value = question.options[index].value;
+  
+  if (type === 'single') {
+    options.forEach(opt => opt.classList.remove('selected'));
+    options[index].classList.add('selected');
+    answers[key] = value;
+  } else {
+    options[index].classList.toggle('selected');
+    if (options[index].classList.contains('selected')) {
+      if (!answers[key].includes(value)) {
+        answers[key].push(value);
+      }
+    } else {
+      answers[key] = answers[key].filter(v => v !== value);
+    }
+  }
+}
+
+function nextQuestion() {
+  if (currentQuestion < quizQuestions.length - 1) {
+    currentQuestion++;
+    showQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function previousQuestion() {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    showQuestion();
+  }
+}
+
+function showResults() {
+  const berufe = getMatchingBerufe();
+  
+  let html = `
+    <div style="background: var(--bg-white); padding: 40px; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+      <h2 style="color: var(--primary-blue); margin-bottom: 25px; font-size: 2rem;">🎯 Diese Berufe könnten zu dir passen:</h2>
+  `;
+  
+  berufe.forEach(beruf => {
+    html += `
+      <div class="beruf-card">
+        <h4>${beruf.name}</h4>
+        <p>${beruf.beschreibung}</p>
+        <div class="beruf-info">
+          <span class="beruf-tag">📚 ${beruf.abschluss}</span>
+          <span class="beruf-tag">⏱️ ${beruf.dauer}</span>
+          ${beruf.chancen ? '<span class="beruf-tag">✨ Gute Chancen</span>' : ''}
+        </div>
+      </div>
+    `;
+  });
+  
+  html += `
+      <div class="info-box" style="margin-top: 25px;">
+        <p><strong>💡 Nächster Schritt:</strong> Wechsle zum Tab "Bildungswege finden", um herauszufinden, wie du zu deinem Wunschberuf kommst!</p>
+      </div>
+      <button class="btn btn-primary" style="width: 100%; margin-top: 25px;" onclick="restartQuiz()">
+        🔄 Quiz neu starten
+      </button>
+    </div>
+  `;
+  
+  document.getElementById('quiz-content').innerHTML = html;
+}
+
+function restartQuiz() {
+  document.getElementById('quiz-start').style.display = 'block';
+  document.getElementById('quiz-progress-section').style.display = 'none';
+  document.getElementById('quiz-content').innerHTML = '';
+  document.getElementById('quiz-progress').style.width = '0%';
+}
+
+function getMatchingBerufe() {
+  const berufeDB = {
+    technik: [
+      { name: "Elektroniker/in", beschreibung: "Installiere elektrische Anlagen und halte sie instand.", abschluss: "Mittlere Reife", dauer: "3,5 Jahre", chancen: true },
+      { name: "Industriemechaniker/in", beschreibung: "Stelle Maschinen und Anlagen her und warte sie.", abschluss: "Hauptschulabschluss", dauer: "3,5 Jahre", chancen: true },
+      { name: "KFZ-Mechatroniker/in", beschreibung: "Repariere und warte Fahrzeuge.", abschluss: "Mittlere Reife", dauer: "3,5 Jahre", chancen: true }
+    ],
+    gesundheit: [
+      { name: "Medizinische/r Fachangestellte/r", beschreibung: "Unterstütze Ärzte bei der Behandlung und Betreuung von Patienten.", abschluss: "Mittlere Reife", dauer: "3 Jahre", chancen: true },
+      { name: "Pflegefachmann/frau", beschreibung: "Pflege und betreue kranke und ältere Menschen.", abschluss: "Mittlere Reife", dauer: "3 Jahre", chancen: true },
+      { name: "Zahnmedizinische/r Fachangestellte/r", beschreibung: "Assistiere bei zahnärztlichen Behandlungen.", abschluss: "Mittlere Reife", dauer: "3 Jahre", chancen: true }
+    ],
+    wirtschaft: [
+      { name: "Kaufmann/frau für Büromanagement", beschreibung: "Organisiere und bearbeite bürowirtschaftliche Aufgaben.", abschluss: "Mittlere Reife", dauer: "3 Jahre", chancen: true },
+      { name: "Industriekaufmann/frau", beschreibung: "Steuere betriebswirtschaftliche Abläufe in Unternehmen.", abschluss: "Mittlere Reife", dauer: "3 Jahre", chancen: true },
+      { name: "Kaufmann/frau im Einzelhandel", beschreibung: "Verkaufe Waren und berate Kunden.", abschluss: "Hauptschulabschluss", dauer: "3 Jahre", chancen: true }
+    ],
+    kreativ: [
+      { name: "Mediengestalter/in", beschreibung: "Gestalte digitale und Print-Medien.", abschluss: "Mittlere Reife", dauer: "3 Jahre", chancen: false },
+      { name: "Friseur/in", beschreibung: "Schneide, färbe und style Haare.", abschluss: "Hauptschulabschluss", dauer: "3 Jahre", chancen: true },
+      { name: "Tischler/in", beschreibung: "Stelle Möbel und andere Holzprodukte her.", abschluss: "Mittlere Reife", dauer: "3 Jahre", chancen: true }
+    ],
+    it: [
+      { name: "Fachinformatiker/in", beschreibung: "Entwickle Software oder betreue IT-Systeme.", abschluss: "Hochschulreife", dauer: "3 Jahre", chancen: true },
+      { name: "IT-System-Elektroniker/in", beschreibung: "Plane und installiere IT-Systeme.", abschluss: "Mittlere Reife", dauer: "3 Jahre", chancen: true }
+    ],
+    natur: [
+      { name: "Gärtner/in", beschreibung: "Pflege Pflanzen und gestalte Außenanlagen.", abschluss: "Hauptschulabschluss", dauer: "3 Jahre", chancen: true },
+      { name: "Landwirt/in", beschreibung: "Erzeuge pflanzliche und tierische Produkte.", abschluss: "Mittlere Reife", dauer: "3 Jahre", chancen: false }
+    ],
+    gastronomie: [
+      { name: "Koch/Köchin", beschreibung: "Bereite Speisen zu und plane Menüs.", abschluss: "Hauptschulabschluss", dauer: "3 Jahre", chancen: true },
+      { name: "Hotelfachmann/frau", beschreibung: "Betreue Gäste in Hotels und gastronomischen Betrieben.", abschluss: "Mittlere Reife", dauer: "3 Jahre", chancen: true }
+    ]
+  };
+  
+  const field = answers.field || 'wirtschaft';
+  return berufeDB[field] || berufeDB.wirtschaft;
+}
+
+// Enter key support
+document.addEventListener('DOMContentLoaded', function() {
+  const selects = document.querySelectorAll('select');
+  selects.forEach(select => {
+    select.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        showPaths();
+      }
+    });
+  });
+});
+</script>
+
+
+<!-- ==================== TAB 4: Ausbildungsguide ==================== -->
+<div id="ausbildung-tab" class="tab-content">
+  <div style="max-width: 1200px; margin: 0 auto; padding: 40px;">
+    <div class="header" style="margin-bottom: 40px;">
+      <h1 style="font-size: 2rem;">📖 Ausbildungsguide Stuttgart & Landkreis Böblingen</h1>
+      <p>Informationen zur Berufsausbildung - Ausgabe 2024/2025</p>
     </div>
 
-    <script>
-        function switchTab(index) {
-            const buttons = document.querySelectorAll('.tab-button');
-            const contents = document.querySelectorAll('.tab-content');
+    <!-- Suchfunktion -->
+    <div style="background: var(--bg-light); padding: 25px; border-radius: 12px; margin-bottom: 30px;">
+      <input type="text" placeholder="🔍 Suche nach Berufen, Schulen oder Themen..." 
+             style="width: 100%; padding: 15px; font-size: 16px; border: 2px solid var(--border-color); border-radius: 8px;">
 
-            buttons.forEach(btn => btn.classList.remove('active'));
-            contents.forEach(content => content.classList.remove('active'));
+      <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px;">
+        <button style="padding: 8px 16px; background: white; border: 2px solid var(--primary-blue); border-radius: 20px; cursor: pointer;">🔧 Technik</button>
+        <button style="padding: 8px 16px; background: white; border: 2px solid var(--primary-blue); border-radius: 20px; cursor: pointer;">💼 Büro & Verwaltung</button>
+        <button style="padding: 8px 16px; background: white; border: 2px solid var(--primary-blue); border-radius: 20px; cursor: pointer;">💻 IT & Medien</button>
+        <button style="padding: 8px 16px; background: white; border: 2px solid var(--primary-blue); border-radius: 20px; cursor: pointer;">🏥 Gesundheit</button>
+        <button style="padding: 8px 16px; background: white; border: 2px solid var(--primary-blue); border-radius: 20px; cursor: pointer;">🛠️ Handwerk</button>
+        <button style="padding: 8px 16px; background: white; border: 2px solid var(--primary-blue); border-radius: 20px; cursor: pointer;">🛒 Verkauf</button>
+      </div>
+    </div>
 
-            buttons[index].classList.add('active');
-            contents[index].classList.add('active');
-        }
+    <!-- Berufsfelder -->
+    <div class="glossary-item">
+      <div class="glossary-term">🏢 Berufsfelder im Überblick</div>
+      <div class="glossary-description">
+        <strong>Bautechnik:</strong> Bauzeichner/in, Maurer/in, Zimmerer/Zimmerin, Straßenbauer/in<br><br>
+        <strong>Büro & Verwaltung:</strong> Kaufmann/-frau für Büromanagement, Industriekaufmann/-frau, Bankkaufmann/-frau<br><br>
+        <strong>Computer & Informatik:</strong> Fachinformatiker/in (4 Fachrichtungen), IT-System-Elektroniker/in<br><br>
+        <strong>Elektro:</strong> Elektroniker/in für Betriebstechnik, Energie- und Gebäudetechnik, Automatisierungstechnik<br><br>
+        <strong>Gesundheit & Soziales:</strong> Medizinische/r Fachangestellte/r, Zahnmedizinische/r Fachangestellte/r<br><br>
+        <strong>Handwerk:</strong> Tischler/in, Maler/in und Lackierer/in, Friseur/in, Bäcker/in<br><br>
+        <strong>IT & Medien:</strong> Mediengestalter/in, Fachinformatiker/in, Kaufmann/-frau für Digitalisierungsmanagement<br><br>
+        <strong>Verkauf & Handel:</strong> Kaufmann/-frau im Einzelhandel, Verkäufer/in, Drogist/in
+      </div>
+    </div>
 
-        function toggleAccordion(header) {
-            const content = header.nextElementSibling;
-            const isActive = header.classList.contains('active');
+    <!-- Ausbildungsarten -->
+    <div class="glossary-item">
+      <div class="glossary-term">🎓 Ausbildungsarten im Überblick</div>
+      <div class="glossary-description">
+        <strong>Duale Ausbildung (Betrieb + Berufsschule):</strong><br>
+        • Dauer: 2-3,5 Jahre<br>
+        • Ausbildungsvergütung: Ja<br>
+        • Lernorte: Betrieb und Berufsschule<br>
+        • Abschluss: Anerkannter Berufsabschluss nach IHK/HWK-Prüfung<br><br>
 
-            // Schließe alle anderen
-            document.querySelectorAll('.accordion-header').forEach(h => {
-                h.classList.remove('active');
-                h.nextElementSibling.classList.remove('active');
-            });
+        <strong>Schulische Ausbildung (Berufsfachschule):</strong><br>
+        • Dauer: 1-4 Jahre<br>
+        • Vergütung: Meist keine (außer Gesundheitsberufe)<br>
+        • Lernort: Berufsfachschule + Praktika<br>
+        • Abschluss: Staatlich anerkannter Berufsabschluss<br><br>
 
-            // Toggle aktuelles
-            if (!isActive) {
-                header.classList.add('active');
-                content.classList.add('active');
-            }
-        }
+        <strong>1-jährige Berufsfachschule (1BFS):</strong><br>
+        Vermittelt berufliche Grundbildung und kann als 1. Ausbildungsjahr angerechnet werden.<br>
+        Bereiche: Metalltechnik, Bautechnik, Elektrotechnik, Holztechnik u.a.
+      </div>
+    </div>
 
-        function toggleFilter(element, category) {
-            element.classList.toggle('active');
-            // Hier würde die Filter-Logik kommen
-            console.log('Filter:', category, element.classList.contains('active'));
-        }
+    <!-- Berufliche Schulen -->
+    <div class="glossary-item">
+      <div class="glossary-term">🏫 Wichtige Berufliche Schulen in der Region</div>
+      <div class="glossary-description">
+        <table class="info-table" style="margin-top: 15px;">
+          <tr>
+            <th>Schule</th>
+            <th>Schwerpunkte</th>
+            <th>Ort</th>
+          </tr>
+          <tr>
+            <td><strong>Robert-Bosch-Schule Stuttgart</strong></td>
+            <td>Metalltechnik, Mechatronik, Zerspanungstechnik</td>
+            <td>Stuttgart</td>
+          </tr>
+          <tr>
+            <td><strong>Werner-Siemens-Schule Stuttgart</strong></td>
+            <td>Elektrotechnik, Elektronik</td>
+            <td>Stuttgart</td>
+          </tr>
+          <tr>
+            <td><strong>IT-Schule Stuttgart</strong></td>
+            <td>Fachinformatik, IT-Systemmanagement</td>
+            <td>Stuttgart</td>
+          </tr>
+          <tr>
+            <td><strong>Kaufmännische Schule 1 Stuttgart</strong></td>
+            <td>Kaufmännische Berufe, Logistik</td>
+            <td>Stuttgart</td>
+          </tr>
+          <tr>
+            <td><strong>Alexander-Fleming-Schule</strong></td>
+            <td>Medizinische Berufe, Gesundheit</td>
+            <td>Stuttgart</td>
+          </tr>
+          <tr>
+            <td><strong>Gottlieb-Daimler-Schule 1 Sindelfingen</strong></td>
+            <td>KFZ-Technik, Metalltechnik</td>
+            <td>Sindelfingen</td>
+          </tr>
+          <tr>
+            <td><strong>Berufliches Schulzentrum Leonberg</strong></td>
+            <td>Diverse Berufsfelder</td>
+            <td>Leonberg</td>
+          </tr>
+        </table>
+      </div>
+    </div>
 
-        function filterContent(searchTerm) {
-            // Hier würde die Such-Logik kommen
-            console.log('Suche:', searchTerm);
-        }
-    </script>
+    <!-- Bewerbungstipps -->
+    <div class="glossary-item">
+      <div class="glossary-term">📝 Berufswahlfahrplan & Bewerbung</div>
+      <div class="glossary-description">
+        <strong>Schritt 1: Orientieren</strong> (1-2 Jahre vor Schulende)<br>
+        • Interessen und Stärken entdecken<br>
+        • Berufsfelder kennenlernen<br>
+        • Berufsberatung nutzen<br><br>
+
+        <strong>Schritt 2: Informieren</strong><br>
+        • Betriebe und Schulen recherchieren<br>
+        • Praktika absolvieren<br>
+        • Berufsinformationszentrum (BIZ) besuchen<br><br>
+
+        <strong>Schritt 3: Bewerben</strong><br>
+        • Bewerbungsunterlagen erstellen<br>
+        • Ausbildungsplätze suchen (IHK/HWK-Lehrstellenbörsen)<br>
+        • Bewerbungen verschicken (12-18 Monate vorher)<br><br>
+
+        <strong>Schritt 4: Entscheiden</strong><br>
+        • Vorstellungsgespräche führen<br>
+        • Ausbildungsvertrag prüfen und unterschreiben
+      </div>
+    </div>
+
+    <!-- Ansprechpartner -->
+    <div class="info-box" style="margin-top: 30px;">
+      <p><strong>📞 Wichtige Anlaufstellen:</strong></p>
+      <p><strong>Berufsberatung der Agentur für Arbeit Stuttgart</strong><br>
+      Tel: 0800 4 5555 00 (kostenfrei)<br>
+      Web: www.arbeitsagentur.de/vor-ort/stuttgart</p>
+
+      <p><strong>IHK Region Stuttgart</strong><br>
+      Tel: 0711 2005-1111<br>
+      Web: www.stuttgart.ihk24.de</p>
+
+      <p><strong>Handwerkskammer Region Stuttgart</strong><br>
+      Tel: 0711 1657-0<br>
+      Web: www.hwk-stuttgart.de</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 5: Schule und dann? ==================== -->
+<div id="schule-tab" class="tab-content">
+  <div style="max-width: 1200px; margin: 0 auto; padding: 40px;">
+    <div class="header" style="margin-bottom: 40px;">
+      <h1 style="font-size: 2rem;">🎓 Schule und dann?</h1>
+      <p>Bildungs- und Qualifizierungswege in Stuttgart</p>
+    </div>
+
+    <!-- Startpunkt-Auswahl -->
+    <div style="margin-bottom: 40px;">
+      <h2 style="color: var(--primary-blue); margin-bottom: 20px;">📍 Wähle deinen Startpunkt:</h2>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+        <!-- Karte 1: Kein Abschluss -->
+        <div class="path-card">
+          <h3 style="color: var(--primary-blue); margin-bottom: 15px;">🎒 Kein Schulabschluss</h3>
+          <p style="margin-bottom: 15px;"><strong>Du möchtest...</strong></p>
+
+          <div style="margin-bottom: 20px;">
+            <p style="font-weight: 600; margin-bottom: 8px;">✓ Hauptschulabschluss machen:</p>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+              <li>AVdual (Ausbildungsvorbereitung dual)</li>
+              <li>BvB (Berufsvorbereitende Bildungsmaßnahme)</li>
+              <li>1-jährige Berufsfachschule</li>
+              <li>Schulfremdenprüfung</li>
+            </ul>
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <p style="font-weight: 600; margin-bottom: 8px;">✓ Beruflich orientieren:</p>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+              <li>VABO (für Deutschförderung)</li>
+              <li>Freiwilligendienst (FSJ/BFD)</li>
+              <li>EQ (Einstiegsqualifizierung)</li>
+            </ul>
+          </div>
+
+          <div>
+            <p style="font-weight: 600; margin-bottom: 8px;">✓ Ausbildung beginnen:</p>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+              <li>Duale Ausbildung (in manchen Berufen möglich)</li>
+              <li>BaE (Berufsausbildung mit Begleitung)</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Karte 2: Hauptschulabschluss -->
+        <div class="path-card">
+          <h3 style="color: var(--primary-blue); margin-bottom: 15px;">📘 Hauptschulabschluss</h3>
+          <p style="margin-bottom: 15px;"><strong>Du möchtest...</strong></p>
+
+          <div style="margin-bottom: 20px;">
+            <p style="font-weight: 600; margin-bottom: 8px;">✓ Mittlere Reife erreichen:</p>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+              <li>2BFS (2-jährige Berufsfachschule)</li>
+              <li>BAS (Berufsaufbauschule mit Ausbildung)</li>
+              <li>Modell 9+3 (über Ausbildung)</li>
+              <li>Abendrealschule</li>
+            </ul>
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <p style="font-weight: 600; margin-bottom: 8px;">✓ Beruflich orientieren:</p>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+              <li>AVdual</li>
+              <li>Freiwilligendienst</li>
+              <li>EQ (Einstiegsqualifizierung)</li>
+            </ul>
+          </div>
+
+          <div>
+            <p style="font-weight: 600; margin-bottom: 8px;">✓ Ausbildung beginnen:</p>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+              <li>Duale Ausbildung</li>
+              <li>Schulische Ausbildung</li>
+              <li>1BFS + Ausbildung</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Karte 3: Mittlere Reife -->
+        <div class="path-card">
+          <h3 style="color: var(--primary-blue); margin-bottom: 15px;">📗 Mittlere Reife</h3>
+          <p style="margin-bottom: 15px;"><strong>Du möchtest...</strong></p>
+
+          <div style="margin-bottom: 20px;">
+            <p style="font-weight: 600; margin-bottom: 8px;">✓ Fachhochschulreife erlangen:</p>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+              <li>Berufskolleg (1-3 Jahre)</li>
+              <li>BOS (mit Ausbildung)</li>
+              <li>Fachschule (mit Ausbildung)</li>
+            </ul>
+          </div>
+
+          <div style="margin-bottom: 20px;">
+            <p style="font-weight: 600; margin-bottom: 8px;">✓ Abitur machen:</p>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+              <li>Berufliches Gymnasium (3 Jahre)</li>
+              <li>BOS (2 Jahre mit Ausbildung)</li>
+              <li>Abendgymnasium</li>
+              <li>Kolleg</li>
+            </ul>
+          </div>
+
+          <div>
+            <p style="font-weight: 600; margin-bottom: 8px;">✓ Ausbildung beginnen:</p>
+            <ul style="margin-left: 20px; line-height: 1.8;">
+              <li>Duale Ausbildung</li>
+              <li>Schulische Ausbildung</li>
+              <li>Beamtenlaufbahn (mittlerer Dienst)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Anlaufstellen -->
+    <div style="margin-top: 50px;">
+      <h2 style="color: var(--primary-blue); margin-bottom: 20px;">📞 Wichtige Anlaufstellen für Beratung</h2>
+
+      <table class="info-table">
+        <tr>
+          <th>Einrichtung</th>
+          <th>Angebot</th>
+          <th>Kontakt</th>
+        </tr>
+        <tr>
+          <td><strong>Agentur für Arbeit Stuttgart</strong></td>
+          <td>Berufsberatung, Berufsinformationszentrum (BIZ), Ausbildungsvermittlung</td>
+          <td>Tel: 0800 4555500<br>stuttgart.berufsberatung@arbeitsagentur.de</td>
+        </tr>
+        <tr>
+          <td><strong>Jobcenter Stuttgart</strong></td>
+          <td>Unterstützung U25, Ausbildungssuche, finanzielle Hilfen</td>
+          <td>Tel: 0711 216-97172<br>www.jobcenter-stuttgart.de</td>
+        </tr>
+        <tr>
+          <td><strong>Jugendagentur Stuttgart</strong></td>
+          <td>Informationen Berufswahl, Stellensuche, Freiwilligendienste</td>
+          <td>Tel: 0711 25518288<br>www.jugendagentur.net</td>
+        </tr>
+        <tr>
+          <td><strong>IHK Region Stuttgart</strong></td>
+          <td>Ausbildungsberatung, Lehrstellenbörse</td>
+          <td>Tel: 0711 2005-1111<br>www.stuttgart.ihk24.de</td>
+        </tr>
+        <tr>
+          <td><strong>Handwerkskammer Stuttgart</strong></td>
+          <td>Beratung handwerkliche Berufe, Lehrstellenbörse</td>
+          <td>Tel: 0711 1657-0<br>www.hwk-stuttgart.de</td>
+        </tr>
+        <tr>
+          <td><strong>JobConnections</strong></td>
+          <td>Bewerbungsunterstützung, Vermittlung in Ausbildung</td>
+          <td>Tel: 0711 216-88919<br>www.jobconnections.de</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Wichtige Programme -->
+    <div style="margin-top: 50px;">
+      <h2 style="color: var(--primary-blue); margin-bottom: 20px;">🎯 Wichtige Förderprogramme</h2>
+
+      <div class="glossary-item">
+        <div class="glossary-term">AVdual (Ausbildungsvorbereitung dual)</div>
+        <div class="glossary-description">
+          <strong>Für wen:</strong> Jugendliche ohne Ausbildungsplatz, berufsschulpflichtig<br>
+          <strong>Dauer:</strong> 1 Schuljahr<br>
+          <strong>Ziel:</strong> Übergang in Ausbildung durch Betriebspraktika, ggf. Hauptschulabschluss<br>
+          <strong>Besonderheit:</strong> Sozialpädagogische Begleitung, hoher Praxisanteil
+        </div>
+      </div>
+
+      <div class="glossary-item">
+        <div class="glossary-term">BvB (Berufsvorbereitende Bildungsmaßnahme)</div>
+        <div class="glossary-description">
+          <strong>Für wen:</strong> Jugendliche ohne Berufswahlentscheidung oder Ausbildungsplatz<br>
+          <strong>Dauer:</strong> Bis zu 12 Monate<br>
+          <strong>Finanzierung:</strong> Berufsausbildungsbeihilfe (BAB) + Fahrtkosten<br>
+          <strong>Zugang:</strong> Über Berufsberatung der Agentur für Arbeit
+        </div>
+      </div>
+
+      <div class="glossary-item">
+        <div class="glossary-term">EQ (Einstiegsqualifizierung)</div>
+        <div class="glossary-description">
+          <strong>Für wen:</strong> Ausbildungsreife Jugendliche ohne Ausbildungsplatz<br>
+          <strong>Dauer:</strong> 6-12 Monate<br>
+          <strong>Art:</strong> Betriebliches Langzeitpraktikum<br>
+          <strong>Ziel:</strong> Übernahme in Ausbildung<br>
+          <strong>Vergütung:</strong> Praktikumsvergütung + Fahrtkosten
+        </div>
+      </div>
+
+      <div class="glossary-item">
+        <div class="glossary-term">BaE (Berufsausbildung in außerbetrieblichen Einrichtungen)</div>
+        <div class="glossary-description">
+          <strong>Für wen:</strong> Benachteiligte Jugendliche mit Vermittlungshemmnissen<br>
+          <strong>Dauer:</strong> 2-3,5 Jahre (je nach Beruf)<br>
+          <strong>Abschluss:</strong> Anerkannter Berufsabschluss<br>
+          <strong>Besonderheit:</strong> Sozialpädagogische Begleitung und Stützunterricht<br>
+          <strong>Zugang:</strong> Über Berufsberatung oder JobConnections
+        </div>
+      </div>
+    </div>
+
+    <!-- Info-Box -->
+    <div class="info-box" style="margin-top: 40px;">
+      <p><strong>💡 Gut zu wissen:</strong></p>
+      <p><strong>Modell 9+3:</strong> Mit Hauptschulabschluss + erfolgreich abgeschlossener Ausbildung + Berufsschulabschluss (Notenschnitt 2,5) erhältst du einen dem Realschulabschluss gleichwertigen Bildungsstand!</p>
+      <p><strong>BAföG:</strong> Finanzielle Unterstützung für schulische Ausbildungswege (Berufskolleg, Berufliches Gymnasium etc.) - Infos beim Amt für Ausbildungsförderung Stuttgart</p>
+      <p><strong>BAB:</strong> Berufsausbildungsbeihilfe für duale Ausbildungen - Infos bei der Agentur für Arbeit</p>
+    </div>
+  </div>
+</div>
 </body>
 </html>
