@@ -2142,6 +2142,41 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
+
+// Live-Suchfunktion für Tab 4
+function filterAusbildungContent(searchTerm) {
+  const resultsDiv = document.getElementById('search-results');
+
+  if (!searchTerm || searchTerm.length < 2) {
+    resultsDiv.innerHTML = '';
+    document.querySelectorAll('#ausbildung-tab .glossary-item[data-searchable]').forEach(item => {
+      item.style.display = 'block';
+    });
+    return;
+  }
+
+  searchTerm = searchTerm.toLowerCase();
+  let foundCount = 0;
+
+  document.querySelectorAll('#ausbildung-tab .glossary-item[data-searchable]').forEach(item => {
+    const text = item.textContent.toLowerCase();
+    if (text.includes(searchTerm)) {
+      item.style.display = 'block';
+      foundCount++;
+    } else {
+      item.style.display = 'none';
+    }
+  });
+
+  if (foundCount > 0) {
+    resultsDiv.innerHTML = `✅ ${foundCount} Ergebnis${foundCount > 1 ? 'se' : ''} gefunden`;
+    resultsDiv.style.color = '#4caf50';
+  } else {
+    resultsDiv.innerHTML = '❌ Keine Ergebnisse - versuche andere Begriffe';
+    resultsDiv.style.color = '#f44336';
+  }
+}
+
 </script>
 
 
@@ -2153,43 +2188,50 @@ document.addEventListener('DOMContentLoaded', function() {
       <p>Informationen zur Berufsausbildung - Ausgabe 2024/2025</p>
     </div>
 
-    <!-- Suchfunktion -->
+    <!-- FUNKTIONALE SUCHFUNKTION -->
     <div style="background: var(--bg-light); padding: 25px; border-radius: 12px; margin-bottom: 30px;">
-      <input type="text" placeholder="🔍 Suche nach Berufen, Schulen oder Themen..." 
-             style="width: 100%; padding: 15px; font-size: 16px; border: 2px solid var(--border-color); border-radius: 8px;">
+      <input type="text" id="ausbildung-search" 
+             placeholder="🔍 Suche nach Berufen, Schulen oder Themen (z.B. IT, Gesundheit, Handwerk)..." 
+             onkeyup="filterAusbildungContent(this.value)"
+             style="width: 100%; padding: 15px; font-size: 16px; border: 2px solid var(--border-color); border-radius: 8px; margin-bottom: 12px;">
+      <div id="search-results" style="font-size: 14px; font-weight: 600; min-height: 20px;"></div>
 
-      <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px;">
-        <button style="padding: 8px 16px; background: white; border: 2px solid var(--primary-blue); border-radius: 20px; cursor: pointer;">🔧 Technik</button>
-        <button style="padding: 8px 16px; background: white; border: 2px solid var(--primary-blue); border-radius: 20px; cursor: pointer;">💼 Büro & Verwaltung</button>
-        <button style="padding: 8px 16px; background: white; border: 2px solid var(--primary-blue); border-radius: 20px; cursor: pointer;">💻 IT & Medien</button>
-        <button style="padding: 8px 16px; background: white; border: 2px solid var(--primary-blue); border-radius: 20px; cursor: pointer;">🏥 Gesundheit</button>
-        <button style="padding: 8px 16px; background: white; border: 2px solid var(--primary-blue); border-radius: 20px; cursor: pointer;">🛠️ Handwerk</button>
-        <button style="padding: 8px 16px; background: white; border: 2px solid var(--primary-blue); border-radius: 20px; cursor: pointer;">🛒 Verkauf</button>
+      <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
+        <button onclick="document.getElementById('ausbildung-search').value='Technik'; filterAusbildungContent('Technik');" 
+                style="padding: 8px 16px; background: white; border: 2px solid var(--primary-blue); border-radius: 20px; cursor: pointer; font-size: 14px;">🔧 Technik</button>
+        <button onclick="document.getElementById('ausbildung-search').value='Büro'; filterAusbildungContent('Büro');" 
+                style="padding: 8px 16px; background: white; border: 2px solid var(--primary-blue); border-radius: 20px; cursor: pointer; font-size: 14px;">💼 Büro</button>
+        <button onclick="document.getElementById('ausbildung-search').value='IT'; filterAusbildungContent('IT');" 
+                style="padding: 8px 16px; background: white; border: 2px solid var(--primary-blue); border-radius: 20px; cursor: pointer; font-size: 14px;">💻 IT</button>
+        <button onclick="document.getElementById('ausbildung-search').value='Gesundheit'; filterAusbildungContent('Gesundheit');" 
+                style="padding: 8px 16px; background: white; border: 2px solid var(--primary-blue); border-radius: 20px; cursor: pointer; font-size: 14px;">🏥 Gesundheit</button>
+        <button onclick="document.getElementById('ausbildung-search').value='Handwerk'; filterAusbildungContent('Handwerk');" 
+                style="padding: 8px 16px; background: white; border: 2px solid var(--primary-blue); border-radius: 20px; cursor: pointer; font-size: 14px;">🛠️ Handwerk</button>
       </div>
     </div>
 
     <!-- Berufsfelder -->
-    <div class="glossary-item">
+    <div class="glossary-item" data-searchable="true">
       <div class="glossary-term">🏢 Berufsfelder im Überblick</div>
       <div class="glossary-description">
         <strong>Bautechnik:</strong> Bauzeichner/in, Maurer/in, Zimmerer/Zimmerin, Straßenbauer/in<br><br>
         <strong>Büro & Verwaltung:</strong> Kaufmann/-frau für Büromanagement, Industriekaufmann/-frau, Bankkaufmann/-frau<br><br>
-        <strong>Computer & Informatik:</strong> Fachinformatiker/in (4 Fachrichtungen), IT-System-Elektroniker/in<br><br>
-        <strong>Elektro:</strong> Elektroniker/in für Betriebstechnik, Energie- und Gebäudetechnik, Automatisierungstechnik<br><br>
-        <strong>Gesundheit & Soziales:</strong> Medizinische/r Fachangestellte/r, Zahnmedizinische/r Fachangestellte/r<br><br>
-        <strong>Handwerk:</strong> Tischler/in, Maler/in und Lackierer/in, Friseur/in, Bäcker/in<br><br>
+        <strong>Computer & Informatik:</strong> Fachinformatiker/in, IT-System-Elektroniker/in<br><br>
+        <strong>Elektro & Technik:</strong> Elektroniker/in für Betriebstechnik, Energie- und Gebäudetechnik, Mechatroniker/in<br><br>
+        <strong>Gesundheit & Soziales:</strong> Medizinische/r Fachangestellte/r, Zahnmedizinische/r Fachangestellte/r, Pflegeberufe<br><br>
+        <strong>Handwerk:</strong> Tischler/in, Maler/in und Lackierer/in, Friseur/in, Bäcker/in, Metallbauer/in<br><br>
         <strong>IT & Medien:</strong> Mediengestalter/in, Fachinformatiker/in, Kaufmann/-frau für Digitalisierungsmanagement<br><br>
         <strong>Verkauf & Handel:</strong> Kaufmann/-frau im Einzelhandel, Verkäufer/in, Drogist/in
       </div>
     </div>
 
     <!-- Ausbildungsarten -->
-    <div class="glossary-item">
+    <div class="glossary-item" data-searchable="true">
       <div class="glossary-term">🎓 Ausbildungsarten im Überblick</div>
       <div class="glossary-description">
         <strong>Duale Ausbildung (Betrieb + Berufsschule):</strong><br>
         • Dauer: 2-3,5 Jahre<br>
-        • Ausbildungsvergütung: Ja<br>
+        • Ausbildungsvergütung: Ja (ca. 600-1.200 €/Monat)<br>
         • Lernorte: Betrieb und Berufsschule<br>
         • Abschluss: Anerkannter Berufsabschluss nach IHK/HWK-Prüfung<br><br>
 
@@ -2200,13 +2242,13 @@ document.addEventListener('DOMContentLoaded', function() {
         • Abschluss: Staatlich anerkannter Berufsabschluss<br><br>
 
         <strong>1-jährige Berufsfachschule (1BFS):</strong><br>
-        Vermittelt berufliche Grundbildung und kann als 1. Ausbildungsjahr angerechnet werden.<br>
+        Vermittelt berufliche Grundbildung. Kann als 1. Ausbildungsjahr angerechnet werden.<br>
         Bereiche: Metalltechnik, Bautechnik, Elektrotechnik, Holztechnik u.a.
       </div>
     </div>
 
     <!-- Berufliche Schulen -->
-    <div class="glossary-item">
+    <div class="glossary-item" data-searchable="true">
       <div class="glossary-term">🏫 Wichtige Berufliche Schulen in der Region</div>
       <div class="glossary-description">
         <table class="info-table" style="margin-top: 15px;">
@@ -2241,7 +2283,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <td>Stuttgart</td>
           </tr>
           <tr>
-            <td><strong>Gottlieb-Daimler-Schule 1 Sindelfingen</strong></td>
+            <td><strong>Gottlieb-Daimler-Schule Sindelfingen</strong></td>
             <td>KFZ-Technik, Metalltechnik</td>
             <td>Sindelfingen</td>
           </tr>
@@ -2255,7 +2297,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 
     <!-- Bewerbungstipps -->
-    <div class="glossary-item">
+    <div class="glossary-item" data-searchable="true">
       <div class="glossary-term">📝 Berufswahlfahrplan & Bewerbung</div>
       <div class="glossary-description">
         <strong>Schritt 1: Orientieren</strong> (1-2 Jahre vor Schulende)<br>
@@ -2297,20 +2339,21 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 </div>
 
+
 <!-- ==================== TAB 5: Schule und dann? ==================== -->
 <div id="schule-tab" class="tab-content">
-  <div style="max-width: 1200px; margin: 0 auto; padding: 40px;">
+  <div style="max-width: 1400px; margin: 0 auto; padding: 40px;">
     <div class="header" style="margin-bottom: 40px;">
       <h1 style="font-size: 2rem;">🎓 Schule und dann?</h1>
       <p>Bildungs- und Qualifizierungswege in Stuttgart</p>
     </div>
 
     <!-- Startpunkt-Auswahl -->
-    <div style="margin-bottom: 40px;">
-      <h2 style="color: var(--primary-blue); margin-bottom: 20px;">📍 Wähle deinen Startpunkt:</h2>
+    <div style="margin-bottom: 50px;">
+      <h2 style="color: var(--primary-blue); margin-bottom: 25px;">📍 Wähle deinen Startpunkt:</h2>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-        <!-- Karte 1: Kein Abschluss -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px;">
+        <!-- Karte 1 -->
         <div class="path-card">
           <h3 style="color: var(--primary-blue); margin-bottom: 15px;">🎒 Kein Schulabschluss</h3>
           <p style="margin-bottom: 15px;"><strong>Du möchtest...</strong></p>
@@ -2343,7 +2386,7 @@ document.addEventListener('DOMContentLoaded', function() {
           </div>
         </div>
 
-        <!-- Karte 2: Hauptschulabschluss -->
+        <!-- Karte 2 -->
         <div class="path-card">
           <h3 style="color: var(--primary-blue); margin-bottom: 15px;">📘 Hauptschulabschluss</h3>
           <p style="margin-bottom: 15px;"><strong>Du möchtest...</strong></p>
@@ -2352,7 +2395,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <p style="font-weight: 600; margin-bottom: 8px;">✓ Mittlere Reife erreichen:</p>
             <ul style="margin-left: 20px; line-height: 1.8;">
               <li>2BFS (2-jährige Berufsfachschule)</li>
-              <li>BAS (Berufsaufbauschule mit Ausbildung)</li>
+              <li>BAS (Berufsaufbauschule)</li>
               <li>Modell 9+3 (über Ausbildung)</li>
               <li>Abendrealschule</li>
             </ul>
@@ -2377,7 +2420,7 @@ document.addEventListener('DOMContentLoaded', function() {
           </div>
         </div>
 
-        <!-- Karte 3: Mittlere Reife -->
+        <!-- Karte 3 -->
         <div class="path-card">
           <h3 style="color: var(--primary-blue); margin-bottom: 15px;">📗 Mittlere Reife</h3>
           <p style="margin-bottom: 15px;"><strong>Du möchtest...</strong></p>
@@ -2413,50 +2456,61 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
     </div>
 
-    <!-- Anlaufstellen -->
-    <div style="margin-top: 50px;">
-      <h2 style="color: var(--primary-blue); margin-bottom: 20px;">📞 Wichtige Anlaufstellen für Beratung</h2>
+    <!-- OPTIMIERTE TABELLE MIT MEHR PLATZ -->
+    <div style="margin-top: 60px;">
+      <h2 style="color: var(--primary-blue); margin-bottom: 30px;">📞 Wichtige Anlaufstellen für Beratung</h2>
 
-      <table class="info-table">
-        <tr>
-          <th>Einrichtung</th>
-          <th>Angebot</th>
-          <th>Kontakt</th>
-        </tr>
-        <tr>
-          <td><strong>Agentur für Arbeit Stuttgart</strong></td>
-          <td>Berufsberatung, Berufsinformationszentrum (BIZ), Ausbildungsvermittlung</td>
-          <td>Tel: 0800 4555500<br>stuttgart.berufsberatung@arbeitsagentur.de</td>
-        </tr>
-        <tr>
-          <td><strong>Jobcenter Stuttgart</strong></td>
-          <td>Unterstützung U25, Ausbildungssuche, finanzielle Hilfen</td>
-          <td>Tel: 0711 216-97172<br>www.jobcenter-stuttgart.de</td>
-        </tr>
-        <tr>
-          <td><strong>Jugendagentur Stuttgart</strong></td>
-          <td>Informationen Berufswahl, Stellensuche, Freiwilligendienste</td>
-          <td>Tel: 0711 25518288<br>www.jugendagentur.net</td>
-        </tr>
-        <tr>
-          <td><strong>IHK Region Stuttgart</strong></td>
-          <td>Ausbildungsberatung, Lehrstellenbörse</td>
-          <td>Tel: 0711 2005-1111<br>www.stuttgart.ihk24.de</td>
-        </tr>
-        <tr>
-          <td><strong>Handwerkskammer Stuttgart</strong></td>
-          <td>Beratung handwerkliche Berufe, Lehrstellenbörse</td>
-          <td>Tel: 0711 1657-0<br>www.hwk-stuttgart.de</td>
-        </tr>
-        <tr>
-          <td><strong>JobConnections</strong></td>
-          <td>Bewerbungsunterstützung, Vermittlung in Ausbildung</td>
-          <td>Tel: 0711 216-88919<br>www.jobconnections.de</td>
-        </tr>
-      </table>
+      <div style="overflow-x: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+        <table style="width: 100%; border-collapse: collapse;">
+          <colgroup>
+            <col style="width: 22%;">
+            <col style="width: 43%;">
+            <col style="width: 35%;">
+          </colgroup>
+          <thead>
+            <tr style="background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);">
+              <th style="padding: 20px; text-align: left; color: white; font-weight: 700;">Einrichtung</th>
+              <th style="padding: 20px; text-align: left; color: white; font-weight: 700;">Angebot</th>
+              <th style="padding: 20px; text-align: left; color: white; font-weight: 700;">Kontakt</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid #e0e0e0;">
+              <td style="padding: 20px; vertical-align: top;"><strong>Agentur für Arbeit Stuttgart</strong></td>
+              <td style="padding: 20px; vertical-align: top; line-height: 1.7;">Berufsberatung, Berufsinformationszentrum (BIZ), Ausbildungsvermittlung</td>
+              <td style="padding: 20px; vertical-align: top; line-height: 1.8;">Tel: 0800 4555500<br>stuttgart.berufsberatung@arbeitsagentur.de</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e0e0e0; background: #f8f9fa;">
+              <td style="padding: 20px; vertical-align: top;"><strong>Jobcenter Stuttgart</strong></td>
+              <td style="padding: 20px; vertical-align: top; line-height: 1.7;">Unterstützung U25, Ausbildungssuche, finanzielle Hilfen</td>
+              <td style="padding: 20px; vertical-align: top; line-height: 1.8;">Tel: 0711 216-97172<br>www.jobcenter-stuttgart.de</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e0e0e0;">
+              <td style="padding: 20px; vertical-align: top;"><strong>Jugendagentur Stuttgart</strong></td>
+              <td style="padding: 20px; vertical-align: top; line-height: 1.7;">Informationen Berufswahl, Stellensuche, Freiwilligendienste</td>
+              <td style="padding: 20px; vertical-align: top; line-height: 1.8;">Tel: 0711 25518288<br>www.jugendagentur.net</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e0e0e0; background: #f8f9fa;">
+              <td style="padding: 20px; vertical-align: top;"><strong>IHK Region Stuttgart</strong></td>
+              <td style="padding: 20px; vertical-align: top; line-height: 1.7;">Ausbildungsberatung, Lehrstellenbörse</td>
+              <td style="padding: 20px; vertical-align: top; line-height: 1.8;">Tel: 0711 2005-1111<br>www.stuttgart.ihk24.de</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e0e0e0;">
+              <td style="padding: 20px; vertical-align: top;"><strong>Handwerkskammer Stuttgart</strong></td>
+              <td style="padding: 20px; vertical-align: top; line-height: 1.7;">Beratung handwerkliche Berufe, Lehrstellenbörse</td>
+              <td style="padding: 20px; vertical-align: top; line-height: 1.8;">Tel: 0711 1657-0<br>www.hwk-stuttgart.de</td>
+            </tr>
+            <tr style="background: #f8f9fa;">
+              <td style="padding: 20px; vertical-align: top;"><strong>JobConnections</strong></td>
+              <td style="padding: 20px; vertical-align: top; line-height: 1.7;">Bewerbungsunterstützung, Vermittlung in Ausbildung</td>
+              <td style="padding: 20px; vertical-align: top; line-height: 1.8;">Tel: 0711 216-88919<br>www.jobconnections.de</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <!-- Wichtige Programme -->
+    <!-- Förderprogramme -->
     <div style="margin-top: 50px;">
       <h2 style="color: var(--primary-blue); margin-bottom: 20px;">🎯 Wichtige Förderprogramme</h2>
 
@@ -2512,5 +2566,6 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
   </div>
 </div>
+
 </body>
 </html>
